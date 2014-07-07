@@ -18,14 +18,14 @@ stat
 		scale(amt)
 			value *= amt
 
-		set_value(amt)
+		setValue(amt)
 			value = amt
 
-		get_value()
+		getValue()
 			var/linear = 0
 			var/multi = 1
 			for(var/mod/m in mods)
-				if(m.target_var == VALUE)
+				if(m.targetVar == VALUE)
 					if(m.kind == FLAT)
 						linear += m.value
 					else if(m.kind == MULTI)
@@ -45,13 +45,13 @@ stat
 		var
 			list/stats
 
-		get_value()
+		getValue()
 			var/linear = 0
 			var/multi = 1
 			var/result
 
 			for(var/mod/m in mods)
-				if(m.target_var == VALUE)
+				if(m.targetVar == VALUE)
 					if(m.kind == FLAT)
 						linear += m.value
 					else if(m.kind == MULTI)
@@ -60,7 +60,7 @@ stat
 			var/stat/s
 			for(var/data/d in stats)
 				s = d.data[1]
-				result += s.get_value() * d.data[2]
+				result += s.getValue() * d.data[2]
 
 			return round((result + linear) * multi)
 
@@ -69,95 +69,95 @@ stat
 
 	bar
 		var
-			min_value
-			max_value
+			minValue
+			maxValue
 
 		shift(amt)
-			value = max(get_min_value(), min(get_max_value(), get_value()+amt))
+			value = max(getMinValue(), min(getMaxValue(), getValue()+amt))
 
 		scale(amt)
-			value = max(get_min_value(), min(get_max_value(), get_value()*amt))
+			value = max(getMinValue(), min(getMaxValue(), getValue()*amt))
 
-		set_value(amt)
-			value = max(get_min_value(), min(get_max_value(), amt))
+		setValue(amt)
+			value = max(getMinValue(), min(getMaxValue(), amt))
 
-		get_value()
+		getValue()
 			var/linear = 0
 			var/multi = 1
 			for(var/mod/m in mods)
-				if(m.target_var == VALUE)
+				if(m.targetVar == VALUE)
 					if(m.kind == FLAT)
 						linear += m.value
 					else if(m.kind == MULTI)
 						multi += m.value
 
-			return max(get_min_value(), min(get_max_value(), round((value + linear) * multi)))
+			return max(getMinValue(), min(getMaxValue(), round((value + linear) * multi)))
 
 		proc
-			set_max_value(amt)
-				if(amt < min_value)
-					debug.send_message("[__FILE__]:[__LINE__] - '[name]' cannot set max_value ([max_value]) to a value ([amt]) less than min_value ([min_value]).")
+			set_maxValue(amt)
+				if(amt < minValue)
+					debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' cannot set maxValue ([maxValue]) to a value ([amt]) less than minValue ([minValue]).")
 					return
-				max_value = amt
-				src.set_value(src.value)
+				maxValue = amt
+				src.setValue(src.value)
 
-			get_max_value()
+			getMaxValue()
 				var/linear = 0
 				var/multi = 1
 				for(var/mod/m in mods)
-					if(m.target_var == MAX_VALUE)
+					if(m.targetVar == MAXVALUE)
 						if(m.kind == FLAT)
 							linear += m.value
 						else if(m.kind == MULTI)
 							multi += m.value
 
-				return round((max_value + linear) * multi)
+				return round((maxValue + linear) * multi)
 
-			set_min_value(amt)
-				if(amt > max_value)
-					debug.send_message("[__FILE__]:[__LINE__] - '[name]' cannot set min_value ([min_value]) to a value ([amt]) greater than max_value ([max_value]).")
+			set_minValue(amt)
+				if(amt > maxValue)
+					debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' cannot set minValue ([minValue]) to a value ([amt]) greater than maxValue ([maxValue]).")
 					return
-				min_value = amt
-				src.set_value(src.value)
+				minValue = amt
+				src.setValue(src.value)
 
-			get_min_value()
+			getMinValue()
 				var/linear = 0
 				var/multi = 1
 				for(var/mod/m in mods)
-					if(m.target_var == MIN_VALUE)
+					if(m.targetVar == MINVALUE)
 						if(m.kind == FLAT)
 							linear += m.value
 						else if(m.kind == MULTI)
 							multi += m.value
 
-				return round((min_value + linear) * multi)
+				return round((minValue + linear) * multi)
 
 		New(nam, min, val, max)
 			if(nam == null)
 				nam = "Unnamed Stat"
 
 			if(min > max)
-				debug.send_message("[__FILE__]:[__LINE__] - '[nam]' cannot be created with a min_value ([min]) greater than max_value ([max]).")
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[nam]' cannot be created with a minValue ([min]) greater than maxValue ([max]).")
 				return
 
 			mods = list()
 
 			name = nam
-			min_value = min
-			max_value = max
-			src.set_value(val)
+			minValue = min
+			maxValue = max
+			src.setValue(val)
 
 mod
 	var
 		name
 		atom/source
-		target_var
+		targetVar
 		kind
 		value
 
 	New(nam, sou, tgt, kin, val)
 		name = nam
 		source = sou
-		target_var = tgt
+		targetVar = tgt
 		kind = kin
 		value = val

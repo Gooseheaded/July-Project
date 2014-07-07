@@ -7,22 +7,22 @@ Edits:
 */
 
 var
-	list/chat_groups
-	chat_group/debug
-	chat_group/world_
+	list/chatGroups
+	chatGroup/debug
+	chatGroup/world_
 
 world
 	New()
 		..()
-		chat_groups = list()
+		chatGroups = list()
 
-		debug = new /chat_group("Debug")
-		world_ = new /chat_group("World")
+		debug = new /chatGroup("Debug")
+		world_ = new /chatGroup("World")
 
-		chat_groups += debug
-		chat_groups += world_
+		chatGroups += debug
+		chatGroups += world_
 
-chat_group
+chatGroup
 	var
 		name
 		list/members
@@ -36,7 +36,7 @@ chat_group
 			if(a in members)
 				members -= a
 
-		send_message(txt)
+		sendMessage(txt)
 			for(var/a in members)
 				a << "\[[name]] [txt]"
 
