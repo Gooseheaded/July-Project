@@ -3,6 +3,14 @@ File:		Chat Group.dm
 Author:		Gooseheaded
 Created:	07/07/14
 
+A chat group is simply a datum that contains a list of atoms (its "members").
+
+You can send a message to the members by using
+	chatGroup.sendMessage(text).
+
+You can add and remove members using
+	chatGroup.add(member), chatGroup.remove(member).
+
 Edits:
 */
 
@@ -43,5 +51,3 @@ chatGroup
 	New(nam)
 		name = nam
 		members = list()
-
-////////////////////////////////////////////////////////////////////////////////

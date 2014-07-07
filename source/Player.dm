@@ -10,33 +10,23 @@ player
 	parent_type = /mob
 
 	var
-		stat/bar
-			health
-			energy
-
-			experience
-
-		stat
-			healthRegen
-			energyRegen
-
-			strength
-			agility
-			wisdom
+		list/stats
 
 	New()
 		..()
-		health =	new("Health", 0, 50, 50)
-		healthRegen =	new("Health Regeneration", 1)
+		stats = list()
 
-		energy =	new("Energy", 0, 10, 10)
-		energyRegen =	new("Energy Regeneration", 1)
+		stats += new/stat/bar("Health", 0, 50, 50)
+		stats += new/stat("Health Regeneration", 1)
 
-		experience =new("Experience", 0, 0, 100)
+		stats += new/stat/bar("Energy", 0, 10, 10)
+		stats += new/stat("Energy Regeneration", 1)
 
-		strength =	new("Strength", 0)
-		agility =	new("Agility", 0)
-		wisdom =	new("Wisdom", 0)
+		stats += new/stat/bar("Experience", 0, 0, 100)
+
+		stats += new/stat("Strength", 0)
+		stats += new/stat("Agility", 0)
+		stats += new/stat("Wisdom", 0)
 
 	Login()
 		..()
@@ -50,6 +40,12 @@ player
 		debug.remove(src)
 
 	Stat()
+		var/stat/bar/health = null
+		for(var/stat/s in stats)
+			if(s.name == "Health")
+				health = s
+				break
+
 		stat("Health: ", "[health.getValue()] | [health.getMaxValue()]")
 
 		for(var/mod/m in health.mods)
@@ -63,7 +59,7 @@ player
 					stat("	Modifier:", "[m.value*100]%")
 
 		for(var/mod/m in health.mods)
-			if(m.targetVar == MAXVALUE)
+			if(m.targetVar == MAX_VALUE)
 				if(m.kind == FLAT)
 					if(m.value < 0)
 						stat("	Max Modifier:", "[m.value]")
@@ -71,8 +67,6 @@ player
 						stat("	Max Modifier:", "+[m.value]")
 				else if(m.kind == MULTI)
 					stat("	Max Modifier:", "[m.value*100]%")
-
-		stat("Energy: ", "[energy.value] | [energy.getMaxValue()]")
 
 	verb
 		new_modifier()
@@ -84,7 +78,12 @@ player
 			else if(kind == "Multiplicative") kind = MULTI
 
 			if(target == "Value") target = VALUE
-			else if(target == "Min") target = MINVALUE
-			else if(target == "Max") target = MAXVALUE
+			else if(target == "Min") target = MIN_VALUE
+			else if(target == "Max") target = MAX_VALUE
 
+			var/stat/bar/health = null
+			for(var/stat/s in stats)
+				if(s.name == "Health")
+					health = s
+					break
 			health.mods += new/mod("Yay", src, target, kind, value)
