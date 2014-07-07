@@ -1,3 +1,10 @@
+/*
+File:		Chat Group.dm
+Author:		Gooseheaded
+Created:	07/07/14
+
+Edits:
+*/
 
 var
 	list/chat_groups

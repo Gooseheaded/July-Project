@@ -1,3 +1,11 @@
+/*
+File:		Global Vaiables and Utility Functions.dm
+Author:		D4RK3 54B3R
+Created:	07/07/14
+
+Edits:
+*/
+
 var
 	//These are the tile dimensions for the game world.
 	icon_x = 32

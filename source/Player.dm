@@ -1,3 +1,10 @@
+/*
+File:		Player.dm
+Author:		Gooseheaded
+Created:	07/07/14
+
+Edits:
+*/
 
 player
 	parent_type = /mob

@@ -1,3 +1,10 @@
+/*
+File:		Stat.dm
+Author:		Gooseheaded
+Created:	07/07/14
+
+Edits:
+*/
 
 stat
 	var
