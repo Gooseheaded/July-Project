@@ -75,7 +75,7 @@ proc
 		while(distance > closeRange*closeRange)
 			//first create the next location
 			//do this by creating the angular list.
-			var/angle = round(_GetAngle(dy,dx), 22.5)
+			var/angle = round(arctan2(dy,dx), 22.5)
 			var/drawAngle=0
 
 			var/angleList[0]
@@ -119,7 +119,6 @@ proc
 			O.icon_state = "[drawAngle]"
 			O.layer = layer
 			O.mouse_opacity = 0
-			O.collideDensity = 0
 
 			cx = ux
 			cy = uy
