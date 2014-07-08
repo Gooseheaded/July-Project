@@ -87,3 +87,6 @@ player
 					health = s
 					break
 			health.mods += new/mod("Yay", src, target, kind, value)
+
+		new_equipment()
+			var/equipment/e = new("Random equi", "Yep", null, null, global.slots["Left Hand"])
