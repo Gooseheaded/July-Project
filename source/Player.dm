@@ -49,37 +49,37 @@ player
 		stat("Health: ", "[health.getValue()] | [health.getMaxValue()]")
 
 		for(var/mod/m in health.mods)
-			if(m.targetVar == VALUE)
-				if(m.kind == FLAT)
+			if(m.targetVar == STAT_VALUE)
+				if(m.kind == MOD_FLAT)
 					if(m.value < 0)
 						stat("	Modifier:", "[m.value]")
 					else
 						stat("	Modifier:", "+[m.value]")
-				else if(m.kind == MULTI)
+				else if(m.kind == MOD_PROP)
 					stat("	Modifier:", "[m.value*100]%")
 
 		for(var/mod/m in health.mods)
-			if(m.targetVar == MAX_VALUE)
-				if(m.kind == FLAT)
+			if(m.targetVar == STAT_MAX_VALUE)
+				if(m.kind == MOD_FLAT)
 					if(m.value < 0)
 						stat("	Max Modifier:", "[m.value]")
 					else
 						stat("	Max Modifier:", "+[m.value]")
-				else if(m.kind == MULTI)
+				else if(m.kind == MOD_PROP)
 					stat("	Max Modifier:", "[m.value*100]%")
 
 	verb
 		new_modifier()
-			var/kind = input("Kind") in list("Flat", "Multiplicative")
-			var/target = input("Target") in list("Value", "Min", "Max")
+			var/kind = input("Kind") in list("Flat", "Proportional")
+			var/target = input("Target") in list("Value", "Minimum Value", "Maximum Value")
 			var/value = input("Value") as num
 
-			if(kind == "Flat") kind = FLAT
-			else if(kind == "Multiplicative") kind = MULTI
+			if(kind == "Flat") kind = MOD_FLAT
+			else if(kind == "Proportional") kind = MOD_PROP
 
-			if(target == "Value") target = VALUE
-			else if(target == "Min") target = MIN_VALUE
-			else if(target == "Max") target = MAX_VALUE
+			if(target == "Value") target = STAT_VALUE
+			else if(target == "Minimum Value") target = STAT_MIN_VALUE
+			else if(target == "Maximum Value") target = STAT_MAX_VALUE
 
 			var/stat/bar/health = null
 			for(var/stat/s in stats)

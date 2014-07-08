@@ -35,16 +35,16 @@ stat
 			value = amt
 
 		getValue()
-			var/linear = 0
+			var/flat = 0
 			var/multi = 1
 			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
+				if(m.targetVar == STAT_VALUE)
+					if(m.kind == MOD_FLAT)
+						flat += m.value
+					else if(m.kind == MOD_PROP)
 						multi += m.value
 
-			return round((value + linear) * multi)
+			return round((value + flat) * multi)
 
 	New(nam, val)
 		if(nam == null)
@@ -65,15 +65,15 @@ stat
 			list/stats
 
 		getValue()
-			var/linear = 0
+			var/flat = 0
 			var/multi = 1
 			var/result
 
 			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
+				if(m.targetVar == STAT_VALUE)
+					if(m.kind == MOD_FLAT)
+						flat += m.value
+					else if(m.kind == MOD_PROP)
 						multi += m.value
 
 			var/stat/s
@@ -81,7 +81,7 @@ stat
 				s = d.data[1]
 				result += s.getValue() * d.data[2]
 
-			return round((result + linear) * multi)
+			return round((result + flat) * multi)
 
 		New(list/l)
 			stats = l
@@ -121,16 +121,16 @@ stat
 			value = max(getMinValue(), min(getMaxValue(), amt))
 
 		getValue()
-			var/linear = 0
+			var/flat = 0
 			var/multi = 1
 			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
+				if(m.targetVar == STAT_VALUE)
+					if(m.kind == MOD_FLAT)
+						flat += m.value
+					else if(m.kind == MOD_PROP)
 						multi += m.value
 
-			return max(getMinValue(), min(getMaxValue(), round((value + linear) * multi)))
+			return max(getMinValue(), min(getMaxValue(), round((value + flat) * multi)))
 
 		proc
 			setMaxValue(amt)
@@ -141,16 +141,16 @@ stat
 				src.setValue(src.value)
 
 			getMaxValue()
-				var/linear = 0
+				var/flat = 0
 				var/multi = 1
 				for(var/mod/m in mods)
-					if(m.targetVar == MAX_VALUE)
-						if(m.kind == FLAT)
-							linear += m.value
-						else if(m.kind == MULTI)
+					if(m.targetVar == STAT_MAX_VALUE)
+						if(m.kind == MOD_FLAT)
+							flat += m.value
+						else if(m.kind == MOD_PROP)
 							multi += m.value
 
-				return round((maxValue + linear) * multi)
+				return round((maxValue + flat) * multi)
 
 			setMinValue(amt)
 				if(amt > maxValue)
@@ -160,16 +160,16 @@ stat
 				src.setValue(src.value)
 
 			getMinValue()
-				var/linear = 0
+				var/flat = 0
 				var/multi = 1
 				for(var/mod/m in mods)
-					if(m.targetVar == MIN_VALUE)
-						if(m.kind == FLAT)
-							linear += m.value
-						else if(m.kind == MULTI)
+					if(m.targetVar == STAT_MIN_VALUE)
+						if(m.kind == MOD_FLAT)
+							flat += m.value
+						else if(m.kind == MOD_PROP)
 							multi += m.value
 
-				return round((minValue + linear) * multi)
+				return round((minValue + flat) * multi)
 
 		New(nam, min, val, max)
 			if(nam == null)
@@ -196,10 +196,10 @@ To create a mod, use the default constructor:
 	b: The source of this mod.
 	 Used for clarity purposes (eg "Warlock #5 is casting Slow on you.")
 	c: The target variable this mod will be modifying.
-	 For stats, it can only be set to VALUE.
-	 For bars, it can also be set to MAX_VALUE or MIN_VALUE.
-	d: Either FLAT or MULTI.
-	 FLAT means the value will be added/subtracted. (eg +5 Strength)
+	 For stats, it can only be set to STAT_VALUE.
+	 For bars, it can also be set to STAT_VALUE or STAT_VALUE.
+	d: Either MOD_FLAT or MOD_PROP.
+	 MOD_FLAT means the value will be added/subtracted. (eg +5 Strength)
 	 Multi means it will be multiplied. (eg +10% Wisdom)
 	e: The value by which this mod will be adding/multiplying the stat it's linked to.
 
@@ -207,7 +207,7 @@ For example, the following mod would lower a target's maximum strength by 10%:
 	assume var/stat/strength belongs to a PC,
 	and that src is an NPC.
 
-	var/mod/weaken = new/mod("Weakened", src, MAX_VALUE, MULTI, -0.10)
+	var/mod/weaken = new/mod("Weakened", src, STAT_VALUE, MOD_PROP, -0.10)
 	strength.mods += weaken
 
 To link a mod to a stat, simply do

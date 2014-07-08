@@ -1,11 +1,11 @@
 
 var/const
-	FLAT = 1
-	MULTI = 2
+	MOD_FLAT = 1
+	MOD_PROP = 2
 
-	VALUE	 = 1
-	MIN_VALUE = 2
-	MAX_VALUE = 3
+	STAT_VALUE = 1
+	STAT_MIN_VALUE = 2
+	STAT_MAX_VALUE = 3
 
 var
 	serverTime //server-time in seconds
@@ -20,19 +20,60 @@ var
 	activeClients[0]
 	activeDatums[0]
 
+	list/triggers
+	list/slots
+
+	list/admins
+
+	list/chatGroups
+	chatGroup/debug
+	chatGroup/world_
+
 world
 
 	mob = /player
 
 	New()
-		.=..()
-
 		worldInitialization()
-
+		.=..()
 		gameLogicLoop()
 
 proc
 	worldInitialization()
+		// Trigger initialization
+		triggers = list(
+			"Physical Offense",
+			"Physical Defense",
+			"Magical Offense",
+			"Magical Defense",
+			"Kill",
+			"Death",
+			"Move",
+			"Opportunity Offense",
+			"Opportunity Defense")
+
+		// Slots initialization
+		slots = list(
+			"Helmet",
+			"Armor",
+			"Belt",
+			"Left Hand",
+			"Right Hand",
+			"Left Ring",
+			"Right Ring",
+			"Amulet")
+
+		// Chat groups initialization
+		chatGroups = list()
+
+		debug = new /chatGroup("Debug")
+		world_ = new /chatGroup("World")
+
+		chatGroups += debug
+		chatGroups += world_
+
+		// Admins initialization
+		admins = list("gooseheaded", "d4rk354b3r")
 
 	gameLogicLoop()
 		while(1)
