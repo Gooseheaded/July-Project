@@ -35,7 +35,6 @@
 #include "source\Component.dm"
 #include "source\Data.dm"
 #include "source\Global Variables and Utility Functions.dm"
-#include "source\Main.dm"
 #include "source\Player.dm"
 #include "source\Stat.dm"
 // END_INCLUDE

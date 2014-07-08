@@ -28,8 +28,6 @@ proc
 
 client
 	var
-		tickTimer
-
 		chatCount
 		chatTimer
 
@@ -76,11 +74,10 @@ client
 
 			if(chatSound) world<<sound(chatSound)
 
-	proc
-		Tick()
-			if(chatCount > 0 && serverTime >= chatTimer)
-				chatTimer = serverTime + chatDelay
-				chatCount --
+	Tick()
+		if(chatCount > 0 && serverTime >= chatTimer)
+			chatTimer = serverTime + chatDelay
+			chatCount --
 
 /*
 
