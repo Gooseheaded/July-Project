@@ -1,3 +1,8 @@
+/*
+*
+*
+*/
+
 
 var/const
 	FLAT = 1
@@ -21,18 +26,24 @@ var
 	activeDatums[0]
 
 world
+	icon_size = 128
+
+	fps = 30
 
 	mob = /player
-
+/*
 	New()
 		.=..()
 
 		worldInitialization()
 
 		gameLogicLoop()
-
+*/
 proc
 	worldInitialization()
+		world.maxx = 10
+		world.maxy = 10
+		world.maxz = 1
 
 	gameLogicLoop()
 		while(1)
@@ -79,6 +90,7 @@ client
 
 	New()
 		.=..()
+		view = "[screen_x]x[screen_y]"
 		activeClients += src
 
 	Del()

@@ -143,7 +143,6 @@ chatBox
 			while(lines.len > maxLines)
 				pruneLine()
 
-
 			//If tokenizing is appropriate here, then tokenize
 
 			tickTimer = serverTime + chatDelay
