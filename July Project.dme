@@ -30,6 +30,7 @@
 #include "external\ShadowDarke.sd_procs\atom.dm"
 #include "external\Forum_account.text\_readme.dm"
 #include "external\Forum_account.text\text.dm"
+#include "source\Ability.dm"
 #include "source\Admin.dm"
 #include "source\Chat Group.dm"
 #include "source\Component.dm"
