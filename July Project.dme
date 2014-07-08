@@ -20,6 +20,7 @@
 // BEGIN_INCLUDE
 #include "July Project.dm"
 #include "external\D4RK354B3R.Darke_BoltEffect\Darke_BoltEffect.dm"
+#include "external\D4RK354B3R.Darke_ChatBox\ChatBox.dm"
 #include "external\D4RK354B3R.Darke_EasingFunctions\Darke_EasingFunctions.dm"
 #include "external\D4RK354B3R.Darke_HUDSystems\HUD_Main.dm"
 #include "external\D4RK354B3R.Darke_Vectors\Vectors.dm"
@@ -34,6 +35,7 @@
 #include "source\Component.dm"
 #include "source\Data.dm"
 #include "source\Global Variables and Utility Functions.dm"
+#include "source\Main.dm"
 #include "source\Player.dm"
 #include "source\Stat.dm"
 // END_INCLUDE
