@@ -145,7 +145,7 @@ stat
 
 			if(min > max)
 				debug.sendMessage("[__FILE__]:[__LINE__] - '[nam]' cannot be created with a minValue ([min]) greater than maxValue ([max]).")
-				return
+				del src
 
 			mods = list()
 
