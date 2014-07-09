@@ -11,7 +11,7 @@ Stats are a controlled way of managing buffs and debuffs on a character.
 
 Stat datums (/stat) have a simple value that you can modify using
 	stat.shift(amount), which is simple addition/subtraction;
-	stat.scale(amount), which is multiplication;
+	stat.scale(amount), which is propplication;
 	stat.setValue(amount), for hard-core value setup.
 
 What really matter here is the following:
@@ -34,17 +34,24 @@ stat
 		setValue(amt)
 			value = amt
 
-		getValue()
-			var/linear = 0
-			var/multi = 1
-			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
-						multi += m.value
+		addMod(mod/m)
+			if(m.targetVar == STAT_VALUE)
+				mods += m
+			else
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' is of type /stat and cannot have mod '[m.name]' because it targets a var other than STAT_VAR.")
+				return
 
-			return round((value + linear) * multi)
+		getValue()
+			var/flat = 0
+			var/prop = 1
+			for(var/mod/m in mods)
+				if(m.targetVar == STAT_VALUE)
+					if(m.kind == MOD_FLAT)
+						flat += m.value
+					else if(m.kind == MOD_PROP)
+						prop += m.value
+
+			return round((value + flat) * prop)
 
 	New(nam, val)
 		if(nam == null)
@@ -53,38 +60,6 @@ stat
 		mods = list()
 		name = nam
 		value = val
-
-	/*
-	INCOMPLETE
-
-	This works exactly like a stat, but uses other stats' values to
-	 calculate its own.
-	*/
-	subStat
-		var
-			list/stats
-
-		getValue()
-			var/linear = 0
-			var/multi = 1
-			var/result
-
-			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
-						multi += m.value
-
-			var/stat/s
-			for(var/data/d in stats)
-				s = d.data[1]
-				result += s.getValue() * d.data[2]
-
-			return round((result + linear) * multi)
-
-		New(list/l)
-			stats = l
 
 	/*
 	Bar stats (/stat/bar) behave slightly different to stats.
@@ -120,17 +95,20 @@ stat
 		setValue(amt)
 			value = max(getMinValue(), min(getMaxValue(), amt))
 
-		getValue()
-			var/linear = 0
-			var/multi = 1
-			for(var/mod/m in mods)
-				if(m.targetVar == VALUE)
-					if(m.kind == FLAT)
-						linear += m.value
-					else if(m.kind == MULTI)
-						multi += m.value
+		addMod(mod/m)
+			mods += m
 
-			return max(getMinValue(), min(getMaxValue(), round((value + linear) * multi)))
+		getValue()
+			var/flat = 0
+			var/prop = 1
+			for(var/mod/m in mods)
+				if(m.targetVar == STAT_VALUE)
+					if(m.kind == MOD_FLAT)
+						flat += m.value
+					else if(m.kind == MOD_PROP)
+						prop += m.value
+
+			return max(getMinValue(), min(getMaxValue(), round((value + flat) * prop)))
 
 		proc
 			setMaxValue(amt)
@@ -141,16 +119,16 @@ stat
 				src.setValue(src.value)
 
 			getMaxValue()
-				var/linear = 0
-				var/multi = 1
+				var/flat = 0
+				var/prop = 1
 				for(var/mod/m in mods)
-					if(m.targetVar == MAX_VALUE)
-						if(m.kind == FLAT)
-							linear += m.value
-						else if(m.kind == MULTI)
-							multi += m.value
+					if(m.targetVar == STAT_MAX_VALUE)
+						if(m.kind == MOD_FLAT)
+							flat += m.value
+						else if(m.kind == MOD_PROP)
+							prop += m.value
 
-				return round((maxValue + linear) * multi)
+				return round((maxValue + flat) * prop)
 
 			setMinValue(amt)
 				if(amt > maxValue)
@@ -160,16 +138,16 @@ stat
 				src.setValue(src.value)
 
 			getMinValue()
-				var/linear = 0
-				var/multi = 1
+				var/flat = 0
+				var/prop = 1
 				for(var/mod/m in mods)
-					if(m.targetVar == MIN_VALUE)
-						if(m.kind == FLAT)
-							linear += m.value
-						else if(m.kind == MULTI)
-							multi += m.value
+					if(m.targetVar == STAT_MIN_VALUE)
+						if(m.kind == MOD_FLAT)
+							flat += m.value
+						else if(m.kind == MOD_PROP)
+							prop += m.value
 
-				return round((minValue + linear) * multi)
+				return round((minValue + flat) * prop)
 
 		New(nam, min, val, max)
 			if(nam == null)
@@ -177,7 +155,7 @@ stat
 
 			if(min > max)
 				debug.sendMessage("[__FILE__]:[__LINE__] - '[nam]' cannot be created with a minValue ([min]) greater than maxValue ([max]).")
-				return
+				del src
 
 			mods = list()
 
@@ -196,22 +174,22 @@ To create a mod, use the default constructor:
 	b: The source of this mod.
 	 Used for clarity purposes (eg "Warlock #5 is casting Slow on you.")
 	c: The target variable this mod will be modifying.
-	 For stats, it can only be set to VALUE.
-	 For bars, it can also be set to MAX_VALUE or MIN_VALUE.
-	d: Either FLAT or MULTI.
-	 FLAT means the value will be added/subtracted. (eg +5 Strength)
-	 Multi means it will be multiplied. (eg +10% Wisdom)
-	e: The value by which this mod will be adding/multiplying the stat it's linked to.
+	 For stats, it can only be set to STAT_VALUE.
+	 For bars, it can also be set to STAT_VALUE or STAT_VALUE.
+	d: Either MOD_FLAT or MOD_PROP.
+	 MOD_FLAT means the value will be added/subtracted. (eg +5 Strength)
+	 Multi means it will be propplied. (eg +10% Wisdom)
+	e: The value by which this mod will be adding/propplying the stat it's linked to.
 
 For example, the following mod would lower a target's maximum strength by 10%:
 	assume var/stat/strength belongs to a PC,
 	and that src is an NPC.
 
-	var/mod/weaken = new/mod("Weakened", src, MAX_VALUE, MULTI, -0.10)
-	strength.mods += weaken
+	var/mod/weaken = new/mod("Weakened", src, STAT_VALUE, MOD_PROP, -0.10)
+	strength.addMod(weaken)
 
 To link a mod to a stat, simply do
-	stat.mods += mod.
+	stat.addMod(mod).
 
 Mods are taken into consideration whenever
 	stat.getValue()
