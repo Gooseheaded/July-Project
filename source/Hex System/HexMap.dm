@@ -24,7 +24,7 @@ HexMap
 		size_x
 		size_y
 
-		hexTurfs[][] //This is all hex turfs in the map
+		hexTurfs[][] //This is all hex Turfs in the map
 		//[x][y] format
 
 		hexes[0] //This is all hexes in this map
@@ -41,7 +41,7 @@ HexMap
 
 		ready = 0
 
-	New(ID, x, y, z, defaultHexType = /Hex/turf)
+	New(ID, x, y, z, defaultHexType = /Hex/Turf)
 		mapID = ID
 		hexMaps[ID] = src
 
@@ -81,7 +81,7 @@ HexMap
 			screen_left = min(bottomLeft.x, topLeft.x)
 			screen_right = max(topRight.x, bottomRight.x)
 
-		initMap(x, y, defaultHexType = /Hex/turf)
+		initMap(x, y, defaultHexType = /Hex/Turf)
 			disposeMap()
 
 			size_x = x
@@ -119,6 +119,5 @@ HexMap
 		saveMap(file)
 
 		disposeMap() //This is used for disposing objects and shit
-			for(var/Hex/turf/H in hexes)
-				hexes -= H
+			for(var/Hex/Turf/H in hexes)
 				del H

@@ -211,7 +211,7 @@ window "default"
 		transparent-color = none
 		alpha = 255
 		macro = "macro"
-		menu = "menu"
+		menu = ""
 		on-close = ""
 	elem "map1"
 		type = MAP

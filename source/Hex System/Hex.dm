@@ -4,13 +4,19 @@
 var
 	//These are vectors that are used to convert hex coordinates to 2d screen coordinates.
 	vector
-		hex_axis_x = 	vec2( 102 ,	-19, 	0)
-		hex_axis_y = 	vec2( 24, 	61,  	0)
-		hex_axis_z = 	vec3( 0,  	0,   	44)
+		//128x128 tile size
+		//hex_axis_x = 	vec2( 102 ,	-19, 	0)
+		//hex_axis_y = 	vec2( 24, 	61,  	0)
+		//hex_axis_z = 	vec3( 0,  	0,   	44)
+
+		//64x64 tile size
+		hex_axis_x = 	vec2( 51 ,	-9, 	0)
+		hex_axis_y = 	vec2( 11, 	30,  	0)
+		hex_axis_z = 	vec3( 0,  	0,   	21)
 
 		//hex_center is the offset from the bottom left of a standard hex icon to the center of the main face
 		//If the hex in question is taller or shorter than the unit hex height, then use hex_axis_z accordingly
-		hex_center = 	vec3(52, 77)
+		hex_center = 	vec3(32, 43)
 
 	const
 		maxHexLayer = 200
@@ -19,6 +25,8 @@ var
 //A Hex is actually any object that lies within the hexagonal tile system
 Hex
 	icon = 'Hex Tile Reference Model.png'
+
+	animate_movement = 0
 
 	parent_type = /atom/movable
 
@@ -48,22 +56,17 @@ Hex
 		hex_y = ny
 		hex_z = nz
 
-		#ifdef DEBUG
-		name = "HEX: [nx], [ny], [nz]"
-		#endif
-
 		moveTo(hex_x, hex_y, hex_z)
 
+	Del()
+		if(map) map.hexes -= src
+
+		.=..()
 
 	Click()
 		.=..()
 
-		var/vector/v = computeCoords(hex_x, hex_y, hex_z)
-
-		world<<"== HEX: [hex_x], [hex_y], [hex_z] =="
-		world<<"([x]: [pixel_x], [y]: [pixel_y]) [layer]"
-		world<<"[v.toString()]"
-		world<<"[map.screen_top], [map.screen_bottom], [map.screen_left], [map.screen_right]"
+		world<<"== [name]: [hex_x], [hex_y], [hex_z] =="
 
 	proc
 		computeCoords(hx, hy, hz)
@@ -72,17 +75,17 @@ Hex
 				vector/coordinates = vec3(0, 0, 0)
 
 
-			coordinates = coordinates.add(hex_axis_x.multiply(hex_x-1))
-			if(hex_y % 2 == 0) coordinates = coordinates.add(hex_axis_x.multiply(0.5))
+			coordinates = coordinates.add( hex_axis_x.multiply(hx - 1) )
+			if(hy % 2 == 0) coordinates = coordinates.add( hex_axis_x.multiply(0.5) )
 
-			coordinates = coordinates.add(hex_axis_y.multiply(hex_y-1))
-			coordinates = coordinates.add(hex_axis_z.multiply(hex_z))
+			coordinates = coordinates.add( hex_axis_y.multiply(hy - 1) )
+			coordinates = coordinates.add( hex_axis_z.multiply(hz) )
 
 			coordinates.y -= map.screen_bottom
 
 			return coordinates
 
-		animatedMoveTo(new_x, new_y, new_z, duration = 1, animated_state = icon_state, finished_state = icon_state)
+		animatedMoveTo(new_x, new_y, new_z, duration = 1, animated_state = src.icon_state, finished_state = src.icon_state)
 			//This function will use LERP tweening to smoothly animate src from the current coordinates
 			//to the new specified coordinates
 			//new_x, new_y, new_z corresponds to the new desired hex coordinates.
@@ -91,31 +94,32 @@ Hex
 			//finished_state is the icon_state that will be set after the animation is completed
 
 			//First compute the pixel difference between the two screen coordinates
+
 			var/vector
 				current = computeCoords(hex_x, hex_y, hex_z)
 				newCoords = computeCoords(new_x, new_y, new_z)
-				difference = newCoords.subtract(current)
+				difference = current.subtract(newCoords)
 
 			var
 				currentLayer = src.layer
 				newLayer = computeScreenLayer(newCoords)
 
 			//Then apply the movement
-			if(!moveTo(new_x, new_y, new_z)) return 0
+			if(!moveTo(new_x, new_y, new_z))
+				return 0
 
 			//Then apply the animation
 			var/matrix/m = new()
-			m.Translate(-difference.x, -difference.y - difference.z)
-
+			m.Translate(difference.x, difference.y + difference.z)
 			transform = m
 
+			layer = currentLayer
 			icon_state = animated_state
 
-			duration *= 0.1
+			duration *= 10
 
-			layer = currentLayer
-
-			animate(src, layer = newLayer, transform = new/matrix(), time=duration)
+			animate(src)
+			animate(src, layer = newLayer, transform = null, time = duration, easing = LINEAR_EASING)
 
 			//Spawn a new thread: set the finished_state after animation is completed.
 			spawn(duration)
@@ -179,24 +183,81 @@ Hex
 
 		entered(Hex/H)
 
+		exited(Hex/H)
 
-	turf
+
+	Turf
 		canEnter(Hex/H)
 			if(!H.hex_density) return 1
 			if(H.hex_density && hex_density) return 0
 			for(var/Hex/E in hex_contents)
+				if(H == E) continue
 				if(H.hex_density && E.hex_density) return 0
 
 			return 1
 
-	actor
-		moveTo(new_x, new_y, new_z) //This returns a 0 if it failed.
+		entered(Hex/H)
+			.=..()
+			hex_contents |= H
+
+		exited(Hex/H)
+			.=..()
+			hex_contents -= H
+
+	Actor
+		var
+			offset_x
+			offset_y
+
+		moveTo(new_x, new_y, new_z, forced = 0) //This returns a 0 if it failed.
 
 			//do the collission detection first?
-			var/Hex/turf
+			var/Hex/Turf
 				newLoc = map.getHex(new_x, new_y)
 
-			if(!newLoc.canEnter(src)) return 0
+			if(!newLoc.canEnter(src) && !forced)
+				return 0
 			else
-				new_z = newLoc.hex_height
-				..(new_x, new_y, new_z)
+				hex_x = new_x
+				hex_y = new_y
+				hex_z = newLoc.hex_height
+
+				var/vector/coordinates = computeCoords(hex_x, hex_y, hex_z)
+				layer = computeScreenLayer(coordinates)
+
+				var/px = coordinates.x
+				var/py = coordinates.y + coordinates.z
+
+				//add the map offset stuff to the px and py here
+				var
+					lx = round(px/icon_x) + 1
+					ly = round(py/icon_y) + 1
+					lz = map.map_z
+
+				pixel_x = px%icon_x
+				pixel_y = py%icon_y
+
+				pixel_x += hex_center.x
+				pixel_y += hex_center.y
+
+				pixel_x += offset_x
+				pixel_y += offset_y
+
+				loc = locate(lx, ly, lz)
+
+				if(pixel_x > icon_x / 2)
+					x ++
+					pixel_x -= icon_x
+
+				if(pixel_y > icon_y / 2)
+					y ++
+					pixel_y -= icon_y
+
+				if(hexLoc != src && hexLoc)
+					hexLoc.exited(src)
+
+				hexLoc = newLoc
+				if(hexLoc != src && hexLoc)
+					hexLoc.entered(src)
+
+				return 1

@@ -16,7 +16,7 @@ var
 	serverTime //server-time in seconds
 	deltaTime //duration of each server tick, in seconds.
 
-	maxServerTime //If the servertime reaches this threshhold, then the serverTime is at risk of timer errors.
+	maxServerTime = 1000000//If the servertime reaches this threshhold, then the serverTime is at risk of timer errors.
 	//A server reboot at this point is necessary to prevent these errors
 
 	pauseGame //This is a bool that will pause the game
@@ -26,7 +26,7 @@ var
 	activeDatums[0]
 
 world
-	icon_size = 128
+	icon_size = 64
 
 	fps = 30
 
@@ -41,8 +41,8 @@ world
 */
 proc
 	worldInitialization()
-		world.maxx = 10
-		world.maxy = 10
+		world.maxx = 1
+		world.maxy = 1
 		world.maxz = 1
 
 	gameLogicLoop()
