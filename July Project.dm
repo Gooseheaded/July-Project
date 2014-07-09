@@ -40,12 +40,12 @@ world
 	fps = 30
 
 	mob = /player
-/*
+
 	New()
 		worldInitialization()
 		.=..()
 		gameLogicLoop()
-*/
+
 proc
 	worldInitialization()
 		// Trigger initialization

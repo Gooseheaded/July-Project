@@ -20,6 +20,7 @@ client
 			world<<"::HEX MOB::"
 			world<<"\<[hexMob.hex_x], [hexMob.hex_y], [hexMob.hex_z]> [hexMob.layer]"
 			world<<"\<[hexMob.x]: [hexMob.pixel_x], [hexMob.y]: [hexMob.pixel_y]>"
+			world<<"[hexMob.hexLoc]"
 
 Hex
 

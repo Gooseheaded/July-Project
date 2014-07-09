@@ -19,8 +19,11 @@
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
+#include "_DEBUG.dm"
 #include "July Project.dm"
+#include "Interface.dmf"
 #include "external\D4RK354B3R.Darke_BoltEffect\Darke_BoltEffect.dm"
+#include "external\D4RK354B3R.Darke_ChatBox\ChatBox.dm"
 #include "external\D4RK354B3R.Darke_EasingFunctions\Darke_EasingFunctions.dm"
 #include "external\D4RK354B3R.Darke_HUDSystems\HUD_Main.dm"
 #include "external\D4RK354B3R.Darke_Vectors\Vectors.dm"
@@ -37,5 +40,9 @@
 #include "source\Global Variables and Utility Functions.dm"
 #include "source\Player.dm"
 #include "source\Stat.dm"
+#include "source\Hex System\Hex.dm"
+#include "source\Hex System\HexMap.dm"
+#include "source\Hex System\HexPathing.dm"
+#include "source\Hex System\HexTesting.dm"
 // END_INCLUDE
 

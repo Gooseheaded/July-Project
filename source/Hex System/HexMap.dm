@@ -57,7 +57,7 @@ HexMap
 			if(hex_x <= 0 || hex_y <= 0) return
 			if(hex_x > size_x || hex_y > size_y) return
 
-			return hexTurfs["[hex_x],[hex_x]"]
+			return hexTurfs["[hex_x],[hex_y]"]
 
 		computeScreenBoundaries()
 			var/vector
