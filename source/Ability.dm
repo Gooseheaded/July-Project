@@ -28,5 +28,5 @@ ability
 		if(triggers)
 			for(var/t in triggers)
 				if(!(t in global.triggers))
-					debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' has an invalid trigger '[t]'.")
+					debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' has an invalid trigger '[t]' and cannot be created.")
 					del src

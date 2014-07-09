@@ -11,6 +11,7 @@ player
 
 	var
 		list/stats
+		list/slots
 
 	New()
 		..()
@@ -27,6 +28,8 @@ player
 		stats += new/stat("Strength", 0)
 		stats += new/stat("Agility", 0)
 		stats += new/stat("Wisdom", 0)
+
+		slots = global.slots.Copy()
 
 	Login()
 		..()
