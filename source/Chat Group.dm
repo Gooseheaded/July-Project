@@ -14,22 +14,6 @@ You can add and remove members using
 Edits:
 */
 
-var
-	list/chatGroups
-	chatGroup/debug
-	chatGroup/world_
-
-world
-	New()
-		..()
-		chatGroups = list()
-
-		debug = new /chatGroup("Debug")
-		world_ = new /chatGroup("World")
-
-		chatGroups += debug
-		chatGroups += world_
-
 chatGroup
 	var
 		name
