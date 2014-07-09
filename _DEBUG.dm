@@ -33,7 +33,7 @@ client
 
 			var/HexMap/map = hexMaps["TEST"]
 
-			var/Hex/H = map.createHexTurf(x, y, /Hex/turf)
+			var/Hex/H = map.createHexTurf(x, y, /Hex/Turf)
 
 mob
 	icon = 'Test.dmi'
