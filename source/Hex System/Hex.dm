@@ -57,6 +57,8 @@ Hex
 		// 16 = 10 oclock
 		// 32 = 12 oclock
 
+		path_cost = 2
+
 
 	New(hexMap, nx, ny, nz = 0)
 		map = hexMap
@@ -341,5 +343,63 @@ Hex
 
 				return 1
 
+
+
+
 proc
-	pixelToHex(px, py) //This function returns a vec2 for the corresponding hex coordinates for this pixel.
+	pixelToHex(px, py, HexMap/hexMap)
+		//This function returns a vec2 for the corresponding hex coordinates for this pixel.
+		//This shit actually does not work... :(
+
+		var
+			mat[2][3]
+
+		px -= hexMap.screen_left
+		py -= hexMap.screen_right
+
+		//first row corresponds to the x coord
+		mat[1] = list(hex_axis_x.x, hex_axis_y.x, px)
+
+		//second row corresponds to the y coord
+		mat[2] = list(hex_axis_x.y, hex_axis_y.y, py)
+
+		var/lead = 1
+		var/rowCount = 2
+		var/columnCount = 3
+
+		for(var/row = 1; row <= rowCount; row++)
+			if(lead > columnCount) return vec2(mat[1][3], mat[2][3])
+
+			var/i = row;
+
+			while(mat[i][lead] == 0)
+				i ++;
+
+				if(i > rowCount)
+					i = row;
+					lead ++;
+					if(lead > columnCount) return vec2(mat[1][3], mat[2][3])
+
+			//swap rows i and row
+			var/clone[] = mat[i]
+			clone = clone.Copy()
+			mat[i] = mat[row]
+			mat[row] = clone
+
+			//divide row (A, row, mt.element(A, row, lead));
+			var/divideAmount = mat[row][lead]
+			for(var/j = 1; j <= columnCount; j++)
+				mat[row][j] /= divideAmount
+
+			for(i = 1; i <= rowCount; i++)
+				if(i != row)
+					//add multiple row(A, i, row, -mt.element(A, i, lead));
+					var/addToRow = i
+					var/addFromRow = row
+
+					var/coefficient = -mat[i][lead]
+
+					for(var/j = 1; j <= columnCount; j++)
+						mat[addToRow][j] += mat[addFromRow][j] * coefficient
+
+		return vec2(mat[1][3], mat[2][3])

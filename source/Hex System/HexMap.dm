@@ -117,3 +117,33 @@ HexMap
 		disposeMap() //This is used for disposing objects and shit
 			for(var/Hex/Turf/H in hexes)
 				del H
+
+		getHexLine(Hex/A, Hex/B)
+			var/Hex/Start = getHex(A.hex_x, A.hex_y)
+			var/Hex/End = getHex(B.hex_x, B.hex_y)
+
+			var/Hex/Current = Start
+			var/line[0]
+
+			while(Current != End)
+				line += Current
+
+				var/vector/vectorTo = vec2(End.x - Current.x, End.y - Current.y)
+				vectorTo = vectorTo.unit()
+
+				var/highestDot = 0
+				var/Hex/Next
+
+				for(var/Hex/H in Current.getAdjacent())
+					var/vector/temp = vec2(H.x - Current.x, H.y - Current.y)
+
+					if(temp.dot(vectorTo) >= highestDot)
+						highestDot = temp.dot(vectorTo)
+						Next = H
+
+				if(Next) Current = Next
+				else break
+
+			line += Current
+
+			return line

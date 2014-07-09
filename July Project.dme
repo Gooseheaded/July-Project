@@ -41,6 +41,7 @@
 #include "source\Stat.dm"
 #include "source\Hex System\Hex.dm"
 #include "source\Hex System\HexMap.dm"
+#include "source\Hex System\HexPathing.dm"
 #include "source\Hex System\HexTesting.dm"
 // END_INCLUDE
 
