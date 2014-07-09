@@ -16,7 +16,13 @@ equipment
 		character/equipped
 
 	proc
-		can_equip(character/char)
+		toString()
+			var/_costs = ""
+			for(var/c in costs)
+				_costs += "[c] : [costs[c]],"
+			return "([slot]) \[[_costs]] - " + (equipped == null ? "" : "(Equipped)")
+
+		canEquip(character/char)
 			var/hasStat
 			for(var/cost in costs)
 				hasStat = FALSE
@@ -31,6 +37,38 @@ equipment
 						return FALSE
 
 			return TRUE
+
+		canStillEquip()
+			if(equipped == null)
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' is not equipped.")
+				return FALSE
+
+			for(var/stat/ss in equipped.stats)
+				for(var/mod/m in ss.mods)
+					if(m.source == src)
+						ss.mods -= m
+						del m
+			var/cost
+			var/hasStat
+			for(var/c in costs)
+				cost = c
+				hasStat = FALSE
+				for(var/stat/s in equipped.stats)
+					if(s.name == c)
+						hasStat = TRUE
+
+						if(s.getValue() < costs[cost])
+							debug.sendMessage("[__FILE__]:[__LINE__] - '[equipped.name]' cannot keep equipping '[name]', because he/she cannot pay the '[cost]' cost (has '[s.getValue()]', but '[costs[cost]]' are needed).")
+							unequip()
+							return
+
+						s.mods += new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost])
+						break
+
+				if(!hasStat)
+					debug.sendMessage("[__FILE__]:[__LINE__] - '[equipped.name]' cannot keep equipping '[name]', '[cost]([costs[cost]])' because he/she doesn't have the stat '[cost]'.")
+					unequip()
+					return
 
 		equip(character/char)
 			if(equipped != null)
@@ -62,7 +100,7 @@ equipment
 										del m
 							return
 
-						s.mods += new/mod(name, src, cost, MOD_FLAT, costs[cost])
+						s.mods += new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost])
 						break
 
 				if(!hasStat)
@@ -78,28 +116,25 @@ equipment
 			equipped = char
 			char.slots[slot] = src
 
-		unequip(character/char)
+		unequip()
 			if(equipped == null)
-				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' not equipped.")
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' is not equipped.")
 				return
-			if(equipped != char)
-				debug.sendMessage("[__FILE__]:[__LINE__] - '[char.name]' is not equipping '[name]'. '[equipped.name]' is.")
+			if(!(slot in equipped.slots))
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[equipped.name]' could not have equipped '[name]' in the first place because he/she does not have the slot '[slot]'.")
 				return
-			if(!(slot in char.slots))
-				debug.sendMessage("[__FILE__]:[__LINE__] - '[char.name]' could not have equipped '[name]' in the first place because he/she does not have the slot '[slot]'.")
-				return
-			if(char.slots[slot] != src)
-				debug.sendMessage("[__FILE__]:[__LINE__] - '[char.name]' has '[slot]' occupied by another item '[char.slots[slot]]', instead of '[name]'.")
+			if(equipped.slots[slot] != src)
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[equipped.name]' has '[slot]' occupied by another item '[equipped.slots[slot]]', instead of '[name]'.")
 				return
 
-			for(var/stat/s in char.stats)
+			for(var/stat/s in equipped.stats)
 				for(var/mod/m in s.mods)
 					if(m.source == src)
 						s.mods -= m
 						del m
 
+			equipped.slots[slot] = null
 			equipped = null
-			char.slots[slot] = null
 
 	New(nam, des, ico, sta, slo, list/cos=null, list/eff=null)
 		..()
@@ -117,6 +152,9 @@ equipment
 		costs = cos
 		if(cos == null)
 			costs = list()
+		for(var/c in costs)
+			if(costs[c] <= 0)
+				costs -= c
 
 		effects = eff
 		if(eff == null)
