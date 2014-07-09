@@ -62,7 +62,7 @@ equipment
 							unequip()
 							return
 
-						s.mods += new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost])
+						s.addMod(new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost]))
 						break
 
 				if(!hasStat)
@@ -100,7 +100,7 @@ equipment
 										del m
 							return
 
-						s.mods += new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost])
+						s.addMod(new/mod(name, src, STAT_VALUE, MOD_FLAT, -costs[cost]))
 						break
 
 				if(!hasStat)

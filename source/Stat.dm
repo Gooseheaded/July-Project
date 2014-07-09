@@ -34,6 +34,13 @@ stat
 		setValue(amt)
 			value = amt
 
+		addMod(mod/m)
+			if(m.targetVar == STAT_VALUE)
+				mods += m
+			else
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' is of type /stat and cannot have mod '[m.name]' because it targets a var other than STAT_VAR.")
+				return
+
 		getValue()
 			var/flat = 0
 			var/prop = 1
@@ -87,6 +94,9 @@ stat
 
 		setValue(amt)
 			value = max(getMinValue(), min(getMaxValue(), amt))
+
+		addMod(mod/m)
+			mods += m
 
 		getValue()
 			var/flat = 0
@@ -176,10 +186,10 @@ For example, the following mod would lower a target's maximum strength by 10%:
 	and that src is an NPC.
 
 	var/mod/weaken = new/mod("Weakened", src, STAT_VALUE, MOD_PROP, -0.10)
-	strength.mods += weaken
+	strength.addMod(weaken)
 
 To link a mod to a stat, simply do
-	stat.mods += mod.
+	stat.addMod(mod).
 
 Mods are taken into consideration whenever
 	stat.getValue()
