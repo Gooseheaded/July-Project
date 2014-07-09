@@ -24,8 +24,8 @@ HexMap
 		size_x
 		size_y
 
-		hexTurfs[][] //This is all hex Turfs in the map
-		//[x][y] format
+		hexTurfs[0] //This is all hex Turfs in the map
+		//This is a hash table
 
 		hexes[0] //This is all hexes in this map
 
@@ -57,7 +57,7 @@ HexMap
 			if(hex_x <= 0 || hex_y <= 0) return
 			if(hex_x > size_x || hex_y > size_y) return
 
-			return hexTurfs[hex_x][hex_y]
+			return hexTurfs["[hex_x],[hex_x]"]
 
 		computeScreenBoundaries()
 			var/vector
@@ -71,10 +71,6 @@ HexMap
 
 			topLeft = topLeft.add(hex_axis_y.multiply(size_y))
 			topRight = topRight.add(hex_axis_y.multiply(size_y))
-
-			if(size_y % 2 == 0)
-				topLeft = topLeft.add(hex_axis_x.multiply(0.5))
-				topRight = topRight.add(hex_axis_x.multiply(0.5))
 
 			screen_top = max(topLeft.y, topRight.y)
 			screen_bottom = min(bottomLeft.y, bottomRight.y)
@@ -108,7 +104,7 @@ HexMap
 
 		createHexTurf(x, y, hexType)
 			var/Hex/H = new hexType(src, x, y)
-			hexTurfs[x][y] = H
+			hexTurfs["[x],[y]"] = H
 			hexes += H
 
 			return H

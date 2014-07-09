@@ -1,4 +1,4 @@
-//This hex system uses a staggered Y axis, to try to preserve a box-like shape for the map.
+//This hex system uses trapezoidal axes. X and Y are 120 degrees from eachother, with X in the 4 oclock
 //Otherwise, using highly slanted axes, we would get a very skewed map shape for a map that is rectangular in data.
 
 var
@@ -11,7 +11,7 @@ var
 
 		//64x64 tile size
 		hex_axis_x = 	vec2( 51 ,	-9, 	0)
-		hex_axis_y = 	vec2( 11, 	30,  	0)
+		hex_axis_y = 	vec2( -14, 	35,  	0)
 		hex_axis_z = 	vec3( 0,  	0,   	21)
 
 		//hex_center is the offset from the bottom left of a standard hex icon to the center of the main face
@@ -49,6 +49,14 @@ Hex
 
 		hex_density //0 or 1
 
+		hex_dir //These are bitflags
+		// 1 = 2 oclock
+		// 2 = 4 oclock
+		// 4 = 6 oclock
+		// 8 = 8 oclock
+		// 16 = 10 oclock
+		// 32 = 12 oclock
+
 
 	New(hexMap, nx, ny, nz = 0)
 		map = hexMap
@@ -74,14 +82,13 @@ Hex
 			var
 				vector/coordinates = vec3(0, 0, 0)
 
-
 			coordinates = coordinates.add( hex_axis_x.multiply(hx - 1) )
-			if(hy % 2 == 0) coordinates = coordinates.add( hex_axis_x.multiply(0.5) )
 
 			coordinates = coordinates.add( hex_axis_y.multiply(hy - 1) )
 			coordinates = coordinates.add( hex_axis_z.multiply(hz) )
 
 			coordinates.y -= map.screen_bottom
+			coordinates.x -= map.screen_left
 
 			return coordinates
 
@@ -174,7 +181,7 @@ Hex
 			var/deltaLayer = maxHexLayer - minHexLayer
 			newLayer = deltaLayer * (1 - py / mapHeight) + minHexLayer
 
-			newLayer += pz * 0.1 + layer_mod
+			newLayer += pz * 2 / 200 + layer_mod
 
 			return newLayer
 
@@ -185,6 +192,78 @@ Hex
 
 		exited(Hex/H)
 
+		getAdjacent()
+			var/adjacent[0]
+
+			adjacent |= map.getHex(hex_x + 1, hex_y + 0)
+			adjacent |= map.getHex(hex_x + 0, hex_y + 1)
+			adjacent |= map.getHex(hex_x - 1, hex_y + 0)
+			adjacent |= map.getHex(hex_x + 0, hex_y - 1)
+			adjacent |= map.getHex(hex_x + 1, hex_y + 1)
+			adjacent |= map.getHex(hex_x - 1, hex_y - 1)
+
+			return adjacent
+
+		getHexesInRange(var/radius = 1)
+			var/outer[0]
+			var/hexes[0]
+
+			hexes |= src
+			outer |= getAdjacent()
+
+			for(var/i = 0; i < radius; i++)
+				var/outerClone[] = outer.Copy()
+
+				for(var/Hex/H in outerClone)
+					outer -= H
+					hexes += H
+					outer |= (H.getAdjacent() - outerClone - hexes)
+
+			return hexes
+
+		getCubicCoords(hx = hex_x, hy = hex_y)
+			var/cx = hx
+			var/cz = hy
+			var/cy = -x-z
+			return vec3(cx, cy, cz)
+
+		getHexDist(Hex/H)
+			var/y1 = -(hex_x - hex_y)
+			var/y2 = -(H.hex_x - H.hex_y)
+			var/dx = hex_x - H.hex_x
+			var/dy = (y1 - y2)
+			var/dz = hex_y - H.hex_y
+
+			return max(abs(dx), abs(dy), abs(dz))
+
+		getHexDir(Hex/H)
+			//refer to the hex direction reference for the directions...
+			var/vector/difference = vec2(H.hex_x - hex_x, H.hex_y - hex_y)
+			var/vector
+				X = vec2(1,0)
+				Y = vec2(0,1)
+				XY = vec2(-1,-1)
+
+			X = X.unit()
+			Y = Y.unit()
+			XY = XY.unit()
+
+			var
+				dotX = difference.dot(X)
+				dotY = difference.dot(Y)
+				dotXY= difference.dot(XY)
+
+			if(abs(dotX) >= abs(dotY) && abs(dotX) >= abs(dotXY))
+				if(dotX > 0) . = 2
+				if(dotX < 0) . = 16
+
+			if(abs(dotY) >= abs(dotX) && abs(dotY) >= abs(dotXY))
+				if(dotY > 0) . = 32
+				if(dotY < 0) . = 4
+
+			if(abs(dotXY) >= abs(dotX) && abs(dotXY) >= abs(dotY))
+				if(dotXY > 0) . = 8
+				if(dotXY < 0) . = 1
 
 	Turf
 		canEnter(Hex/H)
@@ -261,3 +340,6 @@ Hex
 					hexLoc.entered(src)
 
 				return 1
+
+proc
+	pixelToHex(px, py) //This function returns a vec2 for the corresponding hex coordinates for this pixel.
