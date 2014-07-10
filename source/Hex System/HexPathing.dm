@@ -14,6 +14,7 @@ PathNode
 	var
 		score
 		length
+		heuristic
 
 		Hex/hex
 		PathNode/parent
@@ -23,7 +24,7 @@ PathNode
 		src.score = s
 
 proc
-	findHexPath(Hex/Actor/actor, Hex/end)/*
+	findHexPath(Hex/Actor/actor, Hex/end, pathLength = PATH_MAX_LEN)/*
 		var/list/potentialEnds = end.getAdjacent()
 		while(!end.canEnter(actor))
 			end = pick(potentialEnds)
@@ -32,63 +33,128 @@ proc
 
 		var/list/open = list(actor.hexLoc = new/PathNode(actor.hexLoc, 0))
 		var/list/closed = list()
-		var/list/path = list()
 		var/score = 0
+		var/endNodeDense = !end.canEnter(actor)
 
 		var/PathNode/currentNode
 		var/PathNode/neighborNode
 
-		currentNode = findLowest(open, end)
+		currentNode = open[open[1]]
 		currentNode.length = 1
+		currentNode.heuristic = currentNode.hex.getHexDist(end)
 
 		while(currentNode.hex != end)
-			currentNode = findLowest(open, end)
+			currentNode = open[open[1]]
 
-			if(currentNode.length > PATH_MAX_LEN)
+			if(currentNode.length > pathLength)
 				break
 
-			if(!end.canEnter(actor) && (currentNode.hex.getHexDist(end) <= 1))
+			if(endNodeDense && currentNode.heuristic <= 1)
 				break
 
 			open -= currentNode.hex
 			closed[currentNode.hex] = currentNode
 
-			for(var/Hex/hex in currentNode.hex.getAdjacent())
-				neighborNode = null
-				score = currentNode.score + PATH_COST
+			for(var/Hex/hex in (currentNode.hex.getAdjacent() - closed))
+				var/heuristic = hex.getHexDist(end)
+				score = currentNode.score + PATH_COST + hex.path_cost
+				neighborNode = open[hex]
 
-				if(hex in open)
-					neighborNode = open[hex]
+				if(neighborNode)
+					if(score < neighborNode.score)
+						neighborNode.score = score
+						neighborNode.parent = currentNode
+						neighborNode.length = currentNode.length+1
+						neighborNode.heuristic = heuristic
 
-				if(neighborNode == null)
+						open -= hex
+						insertNodeToList(open, neighborNode)
+						continue
+
+				else
 					if(!hex.canEnter(actor))
 						continue
+
 					neighborNode = new/PathNode(hex, score)
 					neighborNode.parent = currentNode
 					neighborNode.length = currentNode.length+1
-					open[hex] = neighborNode
+					neighborNode.heuristic = heuristic
+
+					insertNodeToList(open, neighborNode)
+
 					continue
 
-				if((neighborNode.hex in open) && (score < neighborNode.score))
-					open -= hex
+		var/length = currentNode.length
+		var/list/path = new/list(length)
+		var/index = length
 
 		while(currentNode.hex != actor.hexLoc)
-			path += currentNode.hex
+			path[index --] = currentNode.hex
 			currentNode = currentNode.parent
 
-		var/list/result = list()
-		for(var/i = path.len, i > 0, i--)
-			result += path[i]	// need a dispenser here
+		return path
 
-		return result
+	insertNodeToList(list/open, PathNode/node)
+		var/index = 0
+		var/value = node.score + node.heuristic
 
-	findLowest(list/list, Hex/end)
-		var/PathNode/candidate = list[list[1]]
-		var/PathNode/node
+		//use linear search to find the index
+		for(index = 1; index <= open.len; index++)
+			var/PathNode/checkNode = open[open[index]]
+			var/checkScore = checkNode.score + checkNode.heuristic
+			if(checkScore > value)
+				break
 
-		for(var/Hex/hex in list)
-			node = list[hex]
-			if((node.score + hex.getHexDist(end)) < (candidate.score + candidate.hex.getHexDist(end)))
-				candidate = node
+		/*
+		var/iMin = 1
+		var/iMax = open.len+1
 
-		return candidate
+		//use binary search to find the index
+		while(iMax > iMin)
+			index = round(0.5 * (iMax + iMin))
+
+			if(index > open.len) break
+
+			var/PathNode/checkNode = open[open[index]]
+			var/checkScore = checkNode.score + checkNode.heuristic
+
+			if(checkScore == value)
+				break
+			else if(checkScore < value)
+				iMin = index + 1
+			else if(checkScore > value)
+				iMax = index - 1
+
+		//but iMin == iMax indicates that's where it should be.
+
+		//now insert it
+		*/
+		open.Insert(index, node.hex)
+		open[node.hex] = node
+
+		/*
+		//This commented bit of code checks if the list is sorted
+		//and if the list isn't sorted, then it will print out the whole list and the values of each element
+
+		var/verified = 1
+		for(var/i=1;i<open.len;i++)
+
+			var/PathNode/checkNode = open[open[i]]
+			var/checkScore = checkNode.score + checkNode.heuristic
+
+			var/PathNode/nextNode = open[open[i+1]]
+			var/nextScore = nextNode.score + nextNode.heuristic
+
+			if(checkScore > nextScore)
+				verified = 0
+
+		if(!verified)
+			world<<"SHIT ISN'T SORTED"
+
+			for(var/i=1;i<open.len;i++)
+
+				var/PathNode/checkNode = open[open[i]]
+				var/checkScore = checkNode.score + checkNode.heuristic
+
+				world<<"[i]: [checkScore]"
+		*/
