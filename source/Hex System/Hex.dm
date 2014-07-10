@@ -187,7 +187,7 @@ Hex
 
 			return newLayer
 
-		canEnter(Hex/H)
+		canEnter(Hex/H) 	// Years of research, months of testing
 			. = 1
 
 		entered(Hex/H)

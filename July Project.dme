@@ -19,15 +19,13 @@
 // END_PREFERENCES
 
 // BEGIN_INCLUDE
+#include "_DEBUG.dm"
 #include "July Project.dm"
-#include "external\D4RK354B3R.Darke_BoltEffect\Darke_BoltEffect.dm"
-#include "external\D4RK354B3R.Darke_EasingFunctions\Darke_EasingFunctions.dm"
-#include "external\D4RK354B3R.Darke_HUDSystems\HUD_Main.dm"
+#include "Interface.dmf"
 #include "external\D4RK354B3R.Darke_Vectors\Vectors.dm"
 #include "external\Forum_account.keyboard\_readme.dm"
 #include "external\Forum_account.keyboard\default.dm"
 #include "external\Forum_account.keyboard\keyboard.dm"
-#include "external\ShadowDarke.sd_procs\atom.dm"
 #include "external\Forum_account.text\_readme.dm"
 #include "external\Forum_account.text\text.dm"
 #include "source\Ability.dm"
@@ -37,5 +35,9 @@
 #include "source\Global Variables and Utility Functions.dm"
 #include "source\Player.dm"
 #include "source\Stat.dm"
+#include "source\Hex System\Hex.dm"
+#include "source\Hex System\HexMap.dm"
+#include "source\Hex System\HexPathing.dm"
+#include "source\Hex System\HexTesting.dm"
 // END_INCLUDE
 
