@@ -49,6 +49,8 @@ Hex
 
 		hex_density //0 or 1
 
+		list/adjacentHexes
+
 		hex_dir //These are bitflags
 		// 1 = 2 oclock
 		// 2 = 4 oclock
@@ -57,7 +59,7 @@ Hex
 		// 16 = 10 oclock
 		// 32 = 12 oclock
 
-		path_cost = 2
+		path_cost = 0
 
 
 	New(hexMap, nx, ny, nz = 0)
@@ -166,6 +168,8 @@ Hex
 
 			. = 1
 
+			del adjacentHexes
+
 			hexLoc = map.getHex(new_x, new_y, new_z)
 			if(hexLoc != src && hexLoc != null)
 				hexLoc.entered(src)
@@ -195,16 +199,17 @@ Hex
 		exited(Hex/H)
 
 		getAdjacent()
-			var/adjacent[0]
+			if(!adjacentHexes)
+				adjacentHexes = new()
 
-			adjacent |= map.getHex(hex_x + 1, hex_y + 0)
-			adjacent |= map.getHex(hex_x + 0, hex_y + 1)
-			adjacent |= map.getHex(hex_x - 1, hex_y + 0)
-			adjacent |= map.getHex(hex_x + 0, hex_y - 1)
-			adjacent |= map.getHex(hex_x + 1, hex_y + 1)
-			adjacent |= map.getHex(hex_x - 1, hex_y - 1)
+				adjacentHexes |= map.getHex(hex_x + 1, hex_y + 0)
+				adjacentHexes |= map.getHex(hex_x + 0, hex_y + 1)
+				adjacentHexes |= map.getHex(hex_x - 1, hex_y + 0)
+				adjacentHexes |= map.getHex(hex_x + 0, hex_y - 1)
+				adjacentHexes |= map.getHex(hex_x + 1, hex_y + 1)
+				adjacentHexes |= map.getHex(hex_x - 1, hex_y - 1)
 
-			return adjacent
+			return adjacentHexes
 
 		getHexesInRange(var/radius = 1)
 			var/outer[0]

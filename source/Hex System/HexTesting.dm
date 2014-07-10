@@ -33,8 +33,8 @@ Hex
 				//usr.client.hexmob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
 				var/list/path = findHexPath(usr.client.hexmob, src)
 				for(var/Hex/h in path)
-					usr.client.hexmob.animatedMoveTo(h.hex_x, h.hex_y, h.hex_z, 0.5, "animated", "")
-					sleep(10)
+					usr.client.hexmob.animatedMoveTo(h.hex_x, h.hex_y, h.hex_z, 0.25, "animated", "")
+					sleep(4)
 
 	Actor
 		Testmob
