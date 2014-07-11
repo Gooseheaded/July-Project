@@ -31,9 +31,13 @@ client
 			for(var/i = 1, i <= map.size_x, i ++)
 				for(var/j = 1, j <= map.size_y, j ++)
 					if(prob(50))
-						map.createHexTurf(i, j, /Hex/Dirt)
+						map.createHexTurf(i, j, /Hex/Turf/Dirt)
 					else
-						map.createHexTurf(i, j, /Hex/Grass)
+						map.createHexTurf(i, j, /Hex/Turf/Grass)
+
+			var/trees = sqrt(map.size_x * map.size_y)
+			for(var/i = 1, i <= trees, i ++)
+				map.hexes |= new /Hex/Actor/Tree(map, rand(1, map.size_x), rand(1,map.size_y))
 
 			mob.loc = locate(1,1,1)
 

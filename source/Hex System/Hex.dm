@@ -26,11 +26,6 @@ var
 Hex
 	icon = 'Hex Tile Reference Model.png'
 
-	Dirt
-		icon = 'dirtHex.png'
-	Grass
-		icon = 'grassHex.png'
-
 	animate_movement = 0
 
 	parent_type = /atom/movable
@@ -295,6 +290,11 @@ Hex
 			.=..()
 			hex_contents -= H
 
+		Dirt
+			icon = 'dirtHex.png'
+		Grass
+			icon = 'grassHex.png'
+
 	Actor
 		var
 			offset_x
@@ -352,7 +352,11 @@ Hex
 					hexLoc.entered(src)
 
 				return 1
-
+		Tree
+			icon = 'tree.png'
+			offset_x = -32
+			offset_y = -28
+			hex_density = 1
 
 
 

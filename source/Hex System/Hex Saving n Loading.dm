@@ -3,6 +3,7 @@ var/const
 	TAG_SECTION = "\[section]"
 	TAG_INFO =	"\[info]"
 	TAG_HEX =	"\[hex]"
+	TAG_OBJECT ="\[object]"
 	TAG_FIELD = "\[field]"
 	SECTIONS = 2
 	DEBUG_MAP =	FALSE
@@ -29,6 +30,14 @@ proc
 					save += TAG_FIELD + "[hex.type]"
 					save += TAG_FIELD + "[hex.hex_x]"
 					save += TAG_FIELD + "[hex.hex_y]"
+
+		save += TAG_SECTION
+		for(var/Hex/object in hmap.hexes)
+			if(istype(object, /Hex/Turf)) continue
+			save += TAG_OBJECT
+			save += TAG_FIELD + "[object.type]"
+			save += TAG_FIELD + "[object.hex_x]"
+			save += TAG_FIELD + "[object.hex_y]"
 
 		text2file(save, hmap.mapID + ".hmf")
 		debug.sendMessage("[__FILE__]:[__LINE__] - Map file '[hmap.mapID].hmf' was successfully saved.")
@@ -100,5 +109,18 @@ proc
 			fields = dd_text2list(hex, TAG_FIELD)
 			fields -= fields[1]
 			map.createHexTurf(text2num(fields[2]), text2num(fields[3]), text2path(fields[1]))
+
+		// Objects
+		section = dd_text2list(sections[3], TAG_OBJECT)
+		section -= section[1]
+		if(DEBUG_MAP)
+			debug.sendMessage("Objects in section #3 ([section.len]):")
+			for(var/a in section)
+				debug.sendMessage("\t>[a]")
+		for(var/hex in section)
+			fields = dd_text2list(hex, TAG_FIELD)
+			fields -= fields[1]
+			var/path = text2path(fields[1])
+			map.hexes |= new path(map, text2num(fields[2]), text2num(fields[3]))
 
 		debug.sendMessage("[__FILE__]:[__LINE__] - Map file '[hmap].hmf' was successfully loaded.")
