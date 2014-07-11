@@ -183,7 +183,7 @@ Hex
 
 		computeScreenLayer(vector/coordinates)
 			var
-				py = coordinates.y
+				py = coordinates.y - layer_mod * (abs(hex_axis_y.y) + abs(hex_axis_x.x))
 				pz = coordinates.z
 
 				newLayer
@@ -194,7 +194,9 @@ Hex
 			var/deltaLayer = maxHexLayer - minHexLayer
 			newLayer = deltaLayer * (1 - py / mapHeight) + minHexLayer
 
-			newLayer += pz * 2 / 200 + layer_mod
+			//newLayer = max(minHexLayer, min(maxHexLayer, newLayer))
+
+			newLayer += pz * 2 / 200
 
 			return newLayer
 
@@ -311,7 +313,50 @@ Hex
 				newLoc = map.getHex(new_x, new_y)
 
 			if(!newLoc.canEnter(src) && !forced) return 0
-			else .=..(new_x, new_y, new_z, forced)
+			else
+				hex_x = new_x
+				hex_y = new_y
+				hex_z = newLoc.hex_height + newLoc.hex_z
+
+				var/vector/coordinates = computeCoords(hex_x, hex_y, hex_z)
+				layer = computeScreenLayer(coordinates)
+
+				var/px = coordinates.x
+				var/py = coordinates.y + coordinates.z
+
+				//add the map offset stuff to the px and py here
+				var
+					lx = round(px/icon_x) + 1
+					ly = round(py/icon_y) + 1
+					lz = map.map_z
+
+				pixel_x = px%icon_x
+				pixel_y = py%icon_y
+
+				pixel_x += hex_center.x
+				pixel_y += hex_center.y
+
+				pixel_x += offset_x
+				pixel_y += offset_y
+
+				loc = locate(lx, ly, lz)
+
+				if(pixel_x > icon_x / 2)
+					x ++
+					pixel_x -= icon_x
+
+				if(pixel_y > icon_y / 2)
+					y ++
+					pixel_y -= icon_y
+
+				if(hexLoc != src && hexLoc)
+					hexLoc.exited(src)
+
+				hexLoc = newLoc
+				if(hexLoc != src && hexLoc)
+					hexLoc.entered(src)
+
+				return 1
 
 proc
 	pixelToHex(px, py, HexMap/hexMap)

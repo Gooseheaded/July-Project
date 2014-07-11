@@ -38,14 +38,23 @@ Hex
 
 	Actor
 		Testmob
-			layer_mod = 50
 
 			icon = 'Testmob.dmi'
 
 			offset_x = -32
 			offset_y = -4
+			layer_mod = 1
 
 			hex_density = 1
 
 			var
 				client/c
+
+		Tree
+			icon = 'tree.png'
+			offset_x = -32
+			offset_y = -28
+			hex_density = 1
+			layer_mod = 1
+
+			mouse_opacity = 0

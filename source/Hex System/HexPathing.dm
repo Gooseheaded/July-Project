@@ -43,7 +43,7 @@ proc
 		currentNode.length = 1
 		currentNode.heuristic = currentNode.hex.getHexDist(end)
 
-		while(currentNode.hex != end)
+		while(currentNode.hex != end && open.len > 0)
 			currentNode = open[open[1]]
 
 			if(currentNode.length > pathLength)
