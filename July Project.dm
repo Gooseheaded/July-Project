@@ -35,7 +35,7 @@ var
 	chatGroup/world_
 
 world
-	icon_size = 64
+	icon_size = 32
 
 	fps = 30
 
