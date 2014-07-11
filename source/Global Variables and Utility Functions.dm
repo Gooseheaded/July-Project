@@ -9,13 +9,13 @@ Edits:
 var
 	const
 		//These are the tile dimensions for the game world.
-		icon_x = 64
-		icon_y = 64
+		icon_x = 32
+		icon_y = 32
 
 		//These are variables pertaining to the game screen dimensions//
 		//All of these pixel coordinates are relative to the bottom left corner of the screen
-		screen_x = 9 //The width of the screen in tiles
-		screen_y = 6//The height of the screen in tiles
+		screen_x = 18 //The width of the screen in tiles
+		screen_y = 12//The height of the screen in tiles
 
 		screen_px = 576 //The width of the screen in pixels
 		screen_py = 384//The height of the screen in pixels

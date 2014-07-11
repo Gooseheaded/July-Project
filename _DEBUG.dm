@@ -1,5 +1,7 @@
 #define DEBUG
 
+var/HexMap/map
+
 client
 	lazy_eye = 0
 	perspective = MOB_PERSPECTIVE
@@ -10,10 +12,21 @@ client
 		winset(src, "_DEBUG", "is-visible=true")
 
 	verb
-		CREATEMAP(x as num, y as num)
+		SAVEMAP()
+			saveHexMap(map)
+
+		LOADMAP(id as text)
+			loadHexMap(id)
+
+		CREATEMAP(x as num, y as num, id as text)
 			worldInitialization()
 
-			new/HexMap("TEST", x, y, 1)
+			if(map != null)
+				for(var/key in map.hexTurfs)
+					del map.hexTurfs[key]
+				del map
+
+			map = new/HexMap(id, x, y, 1)
 
 			mob.loc = locate(1,1,1)
 
