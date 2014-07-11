@@ -28,6 +28,13 @@ client
 
 			map = new/HexMap(id, x, y, 1)
 
+			for(var/i = 1, i <= map.size_x, i ++)
+				for(var/j = 1, j <= map.size_y, j ++)
+					if(prob(50))
+						map.createHexTurf(i, j, /Hex/Dirt)
+					else
+						map.createHexTurf(i, j, /Hex/Grass)
+
 			mob.loc = locate(1,1,1)
 
 		TESTHEXES()

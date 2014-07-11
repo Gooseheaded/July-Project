@@ -26,6 +26,11 @@ var
 Hex
 	icon = 'Hex Tile Reference Model.png'
 
+	Dirt
+		icon = 'dirtHex.png'
+	Grass
+		icon = 'grassHex.png'
+
 	animate_movement = 0
 
 	parent_type = /atom/movable

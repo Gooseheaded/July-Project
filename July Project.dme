@@ -28,6 +28,7 @@
 #include "external\Forum_account.keyboard\keyboard.dm"
 #include "external\Forum_account.text\_readme.dm"
 #include "external\Forum_account.text\text.dm"
+#include "external\Deadron.TextHandling\TextHandling.dm"
 #include "source\Ability.dm"
 #include "source\Character.dm"
 #include "source\Chat Group.dm"

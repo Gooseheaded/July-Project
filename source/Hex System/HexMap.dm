@@ -89,11 +89,11 @@ HexMap
 			var/screen_height = screen_top - screen_bottom
 
 			if(world.maxx * icon_x < screen_width + icon_x)
-				world.maxx = (ceil(screen_width/icon_x))
+				world.maxx = (ceil(screen_width/icon_x))+1
 
 
 			if(world.maxy * icon_y < screen_height + icon_y)
-				world.maxy = (ceil(screen_height/icon_y))
+				world.maxy = (ceil(screen_height/icon_y))+1
 
 
 			hexTurfs = new/list(x, y)
@@ -103,6 +103,7 @@ HexMap
 					createHexTurf(i, j, defaultHexType)
 
 		createHexTurf(x, y, hexType)
+			if(hexTurfs["[x],[y]"]) del hexTurfs["[x],[y]"]
 			var/Hex/H = new hexType(src, x, y)
 			hexTurfs["[x],[y]"] = H
 			hexes += H
