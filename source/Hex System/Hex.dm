@@ -357,8 +357,7 @@ Hex
 			offset_x = -32
 			offset_y = -28
 			hex_density = 1
-
-
+			layer_mod = 0.25
 
 proc
 	pixelToHex(px, py, HexMap/hexMap)

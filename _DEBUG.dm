@@ -2,6 +2,16 @@
 
 var/HexMap/map
 
+Hex/Turf
+	Click()
+		..()
+		map.hexes |= new /Hex/Actor/Tree(map, hex_x, hex_y)
+
+Hex/Actor/Tree
+	Click()
+		..()
+		del src
+
 client
 	lazy_eye = 0
 	perspective = MOB_PERSPECTIVE
