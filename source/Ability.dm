@@ -14,7 +14,11 @@ ability
 		list/triggers
 
 	proc
-		activate()
+		trigger(trigger)
+			if(trigger in triggers)
+				debug.sendMessage("[__FILE__]:[__LINE__] - '[name]' has been triggered by '[trigger]'!")
+
+		use()
 
 	New(nam, des, ico, sta, list/tri=null)
 		name = nam

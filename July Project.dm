@@ -12,6 +12,9 @@ var/const
 	STAT_MIN_VALUE = 2
 	STAT_MAX_VALUE = 3
 
+	PATH_COST = 10
+	PATH_MAX_LEN =	8
+
 var
 	serverTime //server-time in seconds
 	deltaTime //duration of each server tick, in seconds.
@@ -35,17 +38,17 @@ var
 	chatGroup/world_
 
 world
-	icon_size = 64
+	icon_size = 32
 
 	fps = 30
 
 	mob = /player
-/*
+
 	New()
 		worldInitialization()
 		.=..()
 		gameLogicLoop()
-*/
+
 proc
 	worldInitialization()
 		// Trigger initialization

@@ -1,25 +1,25 @@
 
 client
 	var
-		Hex/Actor/TestMob/hexMob
+		Hex/Actor/Testmob/hexmob
 
 	verb
-		createHexMob()
+		createHexmob()
 			world<<"creating hex mob"
-			if(hexMob)
-				del hexMob
+			if(hexmob)
+				del hexmob
 
 			var/HexMap/map = hexMaps[hexMaps[1]]
 
-			hexMob = new(map, 1, 1, 0)
-			hexMob.name = "[src.key]"
+			hexmob = new(map, 1, 1, 0)
+			hexmob.name = "[src.key]"
 
-			world<<"created hex mob: [hexMob]"
+			world<<"created hex mob: [hexmob]"
 
-		hexMobDebug()
-			world<<"::HEX MOB::"
-			world<<"\<[hexMob.hex_x], [hexMob.hex_y], [hexMob.hex_z]> [hexMob.layer]"
-			world<<"\<[hexMob.x]: [hexMob.pixel_x], [hexMob.y]: [hexMob.pixel_y]>"
+		hexmobDebug()
+			world<<"::HEX mob::"
+			world<<"\<[hexmob.hex_x], [hexmob.hex_y], [hexmob.hex_z]> [hexmob.layer]"
+			world<<"\<[hexmob.x]: [hexmob.pixel_x], [hexmob.y]: [hexmob.pixel_y]>"
 
 Hex
 
@@ -27,24 +27,34 @@ Hex
 		Click()
 			.=..()
 
-			if(usr.client.hexMob)
-				world<<"MOVING HEX MOB TO [src]"
+			if(usr.client.hexmob)
+				world<<"MOVING HEX mob TO [src]"
 
-				usr.client.hexMob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
-
-				//usr.client.hexMob.moveTo(src.hex_x, src.hex_y, src.hex_z)
-
+				//usr.client.hexmob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
+				var/list/path = findHexPath(usr.client.hexmob, src)
+				for(var/Hex/h in path)
+					usr.client.hexmob.animatedMoveTo(h.hex_x, h.hex_y, h.hex_z, 0.25, "animated", "")
+					sleep(4)
 
 	Actor
-		TestMob
-			layer_mod = 50
+		Testmob
 
-			icon = 'TestMob.dmi'
+			icon = 'Testmob.dmi'
 
 			offset_x = -32
 			offset_y = -4
+			layer_mod = 1
 
 			hex_density = 1
 
 			var
 				client/c
+
+		Tree
+			icon = 'tree.png'
+			offset_x = -32
+			offset_y = -28
+			hex_density = 1
+			layer_mod = 1
+
+			mouse_opacity = 0
