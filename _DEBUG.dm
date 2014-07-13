@@ -1,13 +1,31 @@
 #define DEBUG
 
 var/HexMap/map
-/*
+
 Hex/Turf
+	Click(location,control,params)
+		..()
+
+		//map.hexes |= new /Hex/Actor/Tree(map, hex_x, hex_y)
+
+		var/param[] = params2list(params)
+
+		world<<params
+
+		if(param["right"])
+			world<<"TOGGLE PERIMETER MAN"
+
+			if(locate(/Hex/RedGlow) in hex_contents)
+				del locate(/Hex/RedGlow)
+			else
+				map.hexes |= new /Hex/RedGlow(map, hex_x, hex_y)
+
+Hex/Actor/Tree
 	Click()
 		..()
-		map.hexes |= new /Hex/Actor/Tree(map, hex_x, hex_y)
-*/
-Hex/Actor/Tree
+		del src
+
+Hex/RedGlow
 	Click()
 		..()
 		del src

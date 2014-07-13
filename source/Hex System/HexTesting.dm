@@ -58,3 +58,10 @@ Hex
 			layer_mod = 1
 
 			mouse_opacity = 0
+
+	RedGlow
+		icon = 'RedGlowingHex.png'
+
+		offset_y = 21
+
+		layer_mod = 0.5
