@@ -36,6 +36,8 @@
 #include "source\Global Variables and Utility Functions.dm"
 #include "source\Player.dm"
 #include "source\Stat.dm"
+#include "source\GUI\_Testing.dm"
+#include "source\GUI\GUI.dm"
 #include "source\Hex System\Hex Saving n Loading.dm"
 #include "source\Hex System\Hex.dm"
 #include "source\Hex System\HexMap.dm"
