@@ -6,28 +6,39 @@ Created:	08/07/14
 
 client
 	var
-		GUI/gui
+		GUI/gui// = new()
 
 GUI
 	var
 		client/owner
-		list/contents
+		list/contents = new()
 
 	proc
 		update()
 			for(var/GUIObject/gui in contents)
 				gui.update()
-			owner.images |= contents
+
+				owner.screen |= gui.display
 
 	New(own)
-		if(!istype(own, /client))
+		if(own && !istype(own, /client))
 			debug.sendMessage("[__FILE__]:[__LINE__] - Cannot create GUI with arg '[own]' (must be a /client).")
 			del src
 
-		contents = new/list()
+		if(!own && !istype(usr,/client) && !istype(usr,/mob))
+			debug.sendMessage("[__FILE__]:[__LINE__] - Cannot create GUI with arg '[own]' (must be a /client).")
+			del src
+
+		if(!own)
+			if(istype(usr,/client)) own = usr
+			if(istype(usr,/mob)) own = usr.client
+
+		owner = own
+
+		.=..()
 
 GUIObject
-	parent_type = /atom
+	parent_type = /atom/movable
 
 	var
 		GUI/owner
@@ -79,11 +90,15 @@ GUIObject
 
 		owner = gui
 		owner.contents |= src
+
 		context = con
 		onClick = cli
 		display = dis
+
 		if(display == null)
 			display = new/atom/movable()
+
+		.=..(null)
 
 	Click()
 		call(context, text2path(onClick))(args)
