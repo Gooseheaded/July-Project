@@ -9,6 +9,7 @@
 #define FILE_DIR .
 #define FILE_DIR "assets"
 #define FILE_DIR "assets/graphics"
+#define FILE_DIR "assets/graphics/Tiles"
 #define FILE_DIR "assets/sounds"
 #define FILE_DIR "external"
 #define FILE_DIR "external/D4RK354B3R.Darke_BoltEffect"

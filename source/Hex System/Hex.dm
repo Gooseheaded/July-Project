@@ -19,8 +19,10 @@ var
 		hex_center = 	vec3(32, 43)
 
 	const
-		maxHexLayer = 200
-		minHexLayer = 1
+		maxHexLayer = 4
+		minHexLayer = 0
+
+		depthLayer = 5
 
 //A Hex is actually any object that lies within the hexagonal tile system
 Hex
@@ -172,7 +174,7 @@ Hex
 
 		computeScreenLayer(vector/coordinates)
 			var
-				py = coordinates.y
+				py = coordinates.y - layer_mod
 				pz = coordinates.z
 
 				newLayer
@@ -183,7 +185,7 @@ Hex
 			var/deltaLayer = maxHexLayer - minHexLayer
 			newLayer = deltaLayer * (1 - py / mapHeight) + minHexLayer
 
-			newLayer += pz * 2 / 200 + layer_mod
+			newLayer = max(minHexLayer, min(maxHexLayer, newLayer)) + (pz + hex_height) * depthLayer
 
 			return newLayer
 

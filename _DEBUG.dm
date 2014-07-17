@@ -31,7 +31,7 @@ client
 		CREATEHEX(x as num, y as num)
 			world << "CREATING TEST HEX AT [x], [y]"
 
-			var/HexMap/map = hexMaps["TEST"]
+			var/HexMap/map = hexMaps[hexMaps[1]]
 
 			map.createHexTurf(x, y, /Hex/Turf)
 

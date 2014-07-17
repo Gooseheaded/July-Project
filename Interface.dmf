@@ -176,7 +176,7 @@ window "_DEBUG"
 window "default"
 	elem "default"
 		type = MAIN
-		pos = 178,0
+		pos = 114,0
 		size = 1152x768
 		anchor1 = none
 		anchor2 = none
@@ -230,7 +230,7 @@ window "default"
 		is-default = true
 		border = none
 		drop-zone = true
-		right-click = false
+		right-click = true
 		saved-params = "icon-size"
 		on-size = ""
 		icon-size = 0

@@ -20,7 +20,7 @@ var
 		screen_px = 576 //The width of the screen in pixels
 		screen_py = 384//The height of the screen in pixels
 
-		center_x = 9 //The X tile-coordinate of the center of the screen
+		center_x = 9//The X tile-coordinate of the center of the screen
 		center_y = 6//The Y tile-coordinate of the center of the screen
 
 		center_px = 288//The X pixel-coordinate of the center of the screen
