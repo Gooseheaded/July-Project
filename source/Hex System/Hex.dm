@@ -61,6 +61,8 @@ Hex
 
 		path_cost = 0
 
+		offset_x
+		offset_y
 
 	New(hexMap, nx, ny, nz = 0)
 		map = hexMap
@@ -68,7 +70,7 @@ Hex
 		hex_y = ny
 		hex_z = nz
 
-		moveTo(hex_x, hex_y, hex_z)
+		moveTo(hex_x, hex_y, hex_z, 1)
 
 	Del()
 		if(map) map.hexes -= src
@@ -156,6 +158,7 @@ Hex
 			pixel_x = px%icon_x
 			pixel_y = py%icon_y
 
+
 			loc = locate(lx, ly, lz)
 
 			if(pixel_x > icon_x / 2)
@@ -165,6 +168,10 @@ Hex
 			if(pixel_y > icon_y / 2)
 				y ++
 				pixel_y -= icon_y
+
+
+			pixel_x += offset_x
+			pixel_y += offset_y
 
 			. = 1
 
@@ -176,7 +183,7 @@ Hex
 
 		computeScreenLayer(vector/coordinates)
 			var
-				py = coordinates.y
+				py = coordinates.y - layer_mod * (abs(hex_axis_y.y) + abs(hex_axis_x.x))
 				pz = coordinates.z
 
 				newLayer
@@ -187,7 +194,9 @@ Hex
 			var/deltaLayer = maxHexLayer - minHexLayer
 			newLayer = deltaLayer * (1 - py / mapHeight) + minHexLayer
 
-			newLayer += pz * 2 / 200 + layer_mod
+			//newLayer = max(minHexLayer, min(maxHexLayer, newLayer))
+
+			newLayer += pz * 2 / 200
 
 			return newLayer
 
@@ -296,9 +305,6 @@ Hex
 			icon = 'grassHex.png'
 
 	Actor
-		var
-			offset_x
-			offset_y
 
 		moveTo(new_x, new_y, new_z, forced = 0) //This returns a 0 if it failed.
 
@@ -306,12 +312,11 @@ Hex
 			var/Hex/Turf
 				newLoc = map.getHex(new_x, new_y)
 
-			if(!newLoc.canEnter(src) && !forced)
-				return 0
+			if(!newLoc.canEnter(src) && !forced) return 0
 			else
 				hex_x = new_x
 				hex_y = new_y
-				hex_z = newLoc.hex_height
+				hex_z = newLoc.hex_height + newLoc.hex_z
 
 				var/vector/coordinates = computeCoords(hex_x, hex_y, hex_z)
 				layer = computeScreenLayer(coordinates)
@@ -352,12 +357,6 @@ Hex
 					hexLoc.entered(src)
 
 				return 1
-		Tree
-			icon = 'tree.png'
-			offset_x = -32
-			offset_y = -28
-			hex_density = 1
-			layer_mod = 0.25
 
 proc
 	pixelToHex(px, py, HexMap/hexMap)

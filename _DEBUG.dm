@@ -1,12 +1,12 @@
 #define DEBUG
 
 var/HexMap/map
-
+/*
 Hex/Turf
 	Click()
 		..()
 		map.hexes |= new /Hex/Actor/Tree(map, hex_x, hex_y)
-
+*/
 Hex/Actor/Tree
 	Click()
 		..()
@@ -52,7 +52,7 @@ client
 			mob.loc = locate(1,1,1)
 
 		TESTHEXES()
-			var/HexMap/map = hexMaps["TEST"]
+			var/HexMap/map = hexMaps[hexMaps[1]]
 			world<<"TEST MAP:: [map]"
 			world<<"HEX TURFS: [map.hexes.len]"
 
