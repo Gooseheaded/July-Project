@@ -27,7 +27,7 @@ GUI
 		contents = new/list()
 
 GUIObject
-	parent_type = /atom
+	parent_type = /atom/movable
 
 	var
 		GUI/owner

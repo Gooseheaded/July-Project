@@ -3,7 +3,7 @@
 mob
 	verb
 		ADDGUI()
-			client.gui = new/GUI()
+			client.gui = new()
 
 			var/atom/movable/bg = new()
 			bg.icon = 'ccbg.png'
