@@ -67,12 +67,14 @@ proc
 		slots = list(
 			"Helmet",
 			"Armor",
-			"Belt",
 			"Left Hand",
 			"Right Hand",
 			"Left Ring",
 			"Right Ring",
-			"Amulet")
+			"Amulet",
+			"Boots",
+			"Utility 1",
+			"Utility 2")
 
 		// Chat groups initialization
 		chatGroups = list()

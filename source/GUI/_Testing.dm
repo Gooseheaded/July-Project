@@ -1,12 +1,9 @@
 
-
 mob
 	verb
 		ADDGUI()
-			client.gui = new()
+			if(!client.gui) client.gui = new/GUI()
 
-			var/atom/movable/bg = new()
-			bg.icon = 'ccbg.png'
-
-			client.gui.contents.Add(new/GUIObject(client.gui, null, null, bg))
+			var/GUIObject/o = new/GUIObject(client.gui, null, null, 'ccbg.png', null, GUI_LAYER)
+			o.setValues(2,2, 0,0, GUI_LAYER)
 			client.gui.update()
