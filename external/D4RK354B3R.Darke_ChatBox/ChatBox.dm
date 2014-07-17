@@ -5,9 +5,6 @@ var
 
 	lineLength = 30 //Character limit per line
 
-	chatBox/globalChat = new(1,5,8,11)  //This is a singular chatbox object designed to be shared across all clients
-	//Since this system is pretty fast now, it should be okay to have one chatbox object per client.
-
 	//The following sound variables are used for chat events.
 	systemSound
 	chatSound
@@ -17,14 +14,6 @@ var
 //Default font size: 36
 //Announcement: 70
 //Font: tahoma
-proc
-	systemChat(text)
-		globalChat.addLine("<font color = green><b>[text]</font></b>")
-		if(systemSound) world<<sound(systemSound)
-
-	killChat(text)
-		globalChat.addLine("<font color = red><b>[text]</font></b>")
-		if(systemSound) world<<sound(systemSound)
 
 client
 	var
@@ -33,22 +22,21 @@ client
 
 		chatColor = "#FFFFFF"
 
+		chatBox/chat
+
 	New()
 		.=..()
 
-		globalChat.addClient(src)
+		//make a chat box
+
 
 		if(loginSound) world<<sound(loginSound)
 
-		globalChat.addLine("<b>[src.key] has logged in!</b>")
-
 	Del()
-
-		globalChat.removeClient(src)
+		//delete the chat box
 
 		if(logoutSound) world<<sound(logoutSound)
 
-		globalChat.addLine("<b>[src.key] has logged out!</b>")
 		.=..()
 
 	verb
@@ -70,7 +58,7 @@ client
 			chatCount++
 			chatTimer = serverTime + chatDelay
 
-			globalChat.addLine(text)
+			globalChat(text)
 
 			if(chatSound) world<<sound(chatSound)
 
@@ -78,6 +66,18 @@ client
 		if(chatCount > 0 && serverTime >= chatTimer)
 			chatTimer = serverTime + chatDelay
 			chatCount --
+
+proc
+	globalChat(string, tag = "Global Chat")
+		for(var/chatBox/C)
+			if(tag == "Global Chat" && !C.tag)
+				//send the line
+				C.addLine(string)
+
+			else
+				if(tag == C.tag)
+					//send the line
+					C.addLine(string)
 
 /*
 

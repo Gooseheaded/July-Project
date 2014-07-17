@@ -1,67 +1,100 @@
 
 client
 	var
-		Hex/Actor/Testmob/hexmob
+		Hex/Actor/TestMob/hexMob
 
 	verb
-		createHexmob()
+		createHexMob()
 			world<<"creating hex mob"
-			if(hexmob)
-				del hexmob
+			if(hexMob)
+				del hexMob
 
 			var/HexMap/map = hexMaps[hexMaps[1]]
 
-			hexmob = new(map, 1, 1, 0)
-			hexmob.name = "[src.key]"
+			hexMob = new(map, 1, 1, 0)
+			hexMob.name = "[src.key]"
 
-			world<<"created hex mob: [hexmob]"
+			world<<"created hex mob: [hexMob]"
 
-		hexmobDebug()
-			world<<"::HEX mob::"
-			world<<"\<[hexmob.hex_x], [hexmob.hex_y], [hexmob.hex_z]> [hexmob.layer]"
-			world<<"\<[hexmob.x]: [hexmob.pixel_x], [hexmob.y]: [hexmob.pixel_y]>"
+		hexMobDebug()
+			world<<"::HEX MOB::"
+			world<<"\<[hexMob.hex_x], [hexMob.hex_y], [hexMob.hex_z]> [hexMob.layer]"
+			world<<"\<[hexMob.x]: [hexMob.pixel_x], [hexMob.y]: [hexMob.pixel_y]>"
+			world<<"[hexMob.hexLoc]"
 
 Hex
 
 	Turf
-		Click()
+		Click(location,control,params)
 			.=..()
 
-			if(usr.client.hexmob)
-				world<<"MOVING HEX mob TO [src]"
+			var/param[] = params2list(params)
 
-				//usr.client.hexmob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
-				var/list/path = findHexPath(usr.client.hexmob, src)
-				for(var/Hex/h in path)
-					usr.client.hexmob.animatedMoveTo(h.hex_x, h.hex_y, h.hex_z, 0.25, "animated", "")
-					sleep(4)
+			if(usr.client.hexMob && param["left"])
+				world<<"MOVING HEX MOB TO [src]"
+
+				usr.client.hexMob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
+
+				//usr.client.hexMob.moveTo(src.hex_x, src.hex_y, src.hex_z)
+
+
+			if(param["right"])
+				if(locate(/Hex/Actor/grass) in hex_contents)
+					var/Hex/Actor/grass/G = locate(/Hex/Actor/grass) in hex_contents
+					hex_contents -= G
+
+					G.AutoJoin()
+					del G
+				else
+					world<<"CREATING GRASS AT [src]"
+
+					var/HexMap/map = hexMaps[hexMaps[1]]
+					var/Hex/Actor/grass/G = new(map, hex_x, hex_y)
+					map.hexes |= G
 
 	Actor
-		Testmob
+		TestMob
+			layer_mod = 0
 
-			icon = 'Testmob.dmi'
+			icon = 'TestMob.dmi'
 
 			offset_x = -32
 			offset_y = -4
-			layer_mod = 1
 
 			hex_density = 1
+			hex_height = 1
 
 			var
 				client/c
 
-		Tree
-			icon = 'tree.png'
+		grass
+			hex_height = 0.2
+			icon = 'ThickGrass-joined.dmi'
+			icon_state = "0"
+
+
 			offset_x = -32
-			offset_y = -28
-			hex_density = 1
-			layer_mod = 1
+			offset_y = -21
 
 			mouse_opacity = 0
 
-	RedGlow
-		icon = 'RedGlowingHex.png'
+			New()
+				.=..()
+				AutoJoin()
 
-		offset_y = 21
+			proc
+				AutoJoin()
+					JoinFlags()
 
-		layer_mod = 0.5
+					for(var/Hex/Turf/H in getAdjacent())
+						var/Hex/G = locate(src.type) in H.hex_contents
+						if(G) G:JoinFlags()
+
+				JoinFlags()
+					var/flags = 0
+
+					for(var/Hex/Turf/H in getAdjacent())
+						if(locate(src.type) in H.hex_contents)
+							flags |= src.getHexDir(H)
+
+					icon_state = "[flags]"

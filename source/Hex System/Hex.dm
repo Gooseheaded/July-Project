@@ -19,8 +19,10 @@ var
 		hex_center = 	vec3(32, 43)
 
 	const
-		maxHexLayer = 200
-		minHexLayer = 1
+		maxHexLayer = 4
+		minHexLayer = 0
+
+		depthLayer = 5
 
 //A Hex is actually any object that lies within the hexagonal tile system
 Hex
@@ -49,8 +51,6 @@ Hex
 
 		hex_density //0 or 1
 
-		list/adjacentHexes
-
 		hex_dir //These are bitflags
 		// 1 = 2 oclock
 		// 2 = 4 oclock
@@ -59,10 +59,8 @@ Hex
 		// 16 = 10 oclock
 		// 32 = 12 oclock
 
-		path_cost = 0
+		path_cost = 2
 
-		offset_x
-		offset_y
 
 	New(hexMap, nx, ny, nz = 0)
 		map = hexMap
@@ -70,7 +68,7 @@ Hex
 		hex_y = ny
 		hex_z = nz
 
-		moveTo(hex_x, hex_y, hex_z, 1)
+		moveTo(hex_x, hex_y, hex_z)
 
 	Del()
 		if(map) map.hexes -= src
@@ -158,7 +156,6 @@ Hex
 			pixel_x = px%icon_x
 			pixel_y = py%icon_y
 
-
 			loc = locate(lx, ly, lz)
 
 			if(pixel_x > icon_x / 2)
@@ -169,13 +166,7 @@ Hex
 				y ++
 				pixel_y -= icon_y
 
-
-			pixel_x += offset_x
-			pixel_y += offset_y
-
 			. = 1
-
-			del adjacentHexes
 
 			hexLoc = map.getHex(new_x, new_y, new_z)
 			if(hexLoc != src && hexLoc != null)
@@ -183,7 +174,7 @@ Hex
 
 		computeScreenLayer(vector/coordinates)
 			var
-				py = coordinates.y - layer_mod * (abs(hex_axis_y.y) + abs(hex_axis_x.x))
+				py = coordinates.y - layer_mod
 				pz = coordinates.z
 
 				newLayer
@@ -194,13 +185,11 @@ Hex
 			var/deltaLayer = maxHexLayer - minHexLayer
 			newLayer = deltaLayer * (1 - py / mapHeight) + minHexLayer
 
-			//newLayer = max(minHexLayer, min(maxHexLayer, newLayer))
-
-			newLayer += pz * 2 / 200
+			newLayer = max(minHexLayer, min(maxHexLayer, newLayer)) + (pz + hex_height) * depthLayer
 
 			return newLayer
 
-		canEnter(Hex/H) 	// Years of research, months of testing
+		canEnter(Hex/H)
 			. = 1
 
 		entered(Hex/H)
@@ -208,17 +197,16 @@ Hex
 		exited(Hex/H)
 
 		getAdjacent()
-			if(!adjacentHexes)
-				adjacentHexes = new()
+			var/adjacent[0]
 
-				adjacentHexes |= map.getHex(hex_x + 1, hex_y + 0)
-				adjacentHexes |= map.getHex(hex_x + 0, hex_y + 1)
-				adjacentHexes |= map.getHex(hex_x - 1, hex_y + 0)
-				adjacentHexes |= map.getHex(hex_x + 0, hex_y - 1)
-				adjacentHexes |= map.getHex(hex_x + 1, hex_y + 1)
-				adjacentHexes |= map.getHex(hex_x - 1, hex_y - 1)
+			adjacent |= map.getHex(hex_x + 1, hex_y + 0)
+			adjacent |= map.getHex(hex_x + 0, hex_y + 1)
+			adjacent |= map.getHex(hex_x - 1, hex_y + 0)
+			adjacent |= map.getHex(hex_x + 0, hex_y - 1)
+			adjacent |= map.getHex(hex_x + 1, hex_y + 1)
+			adjacent |= map.getHex(hex_x - 1, hex_y - 1)
 
-			return adjacentHexes
+			return adjacent
 
 		getHexesInRange(var/radius = 1)
 			var/outer[0]
@@ -299,12 +287,10 @@ Hex
 			.=..()
 			hex_contents -= H
 
-		Dirt
-			icon = 'dirtHex.png'
-		Grass
-			icon = 'grassHex.png'
-
 	Actor
+		var
+			offset_x
+			offset_y
 
 		moveTo(new_x, new_y, new_z, forced = 0) //This returns a 0 if it failed.
 
@@ -312,11 +298,12 @@ Hex
 			var/Hex/Turf
 				newLoc = map.getHex(new_x, new_y)
 
-			if(!newLoc.canEnter(src) && !forced) return 0
+			if(!newLoc.canEnter(src) && !forced)
+				return 0
 			else
 				hex_x = new_x
 				hex_y = new_y
-				hex_z = newLoc.hex_height + newLoc.hex_z
+				hex_z = newLoc.hex_height
 
 				var/vector/coordinates = computeCoords(hex_x, hex_y, hex_z)
 				layer = computeScreenLayer(coordinates)
@@ -357,6 +344,9 @@ Hex
 					hexLoc.entered(src)
 
 				return 1
+
+
+
 
 proc
 	pixelToHex(px, py, HexMap/hexMap)
