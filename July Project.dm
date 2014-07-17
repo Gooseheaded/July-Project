@@ -12,11 +12,14 @@ var/const
 	STAT_MIN_VALUE = 2
 	STAT_MAX_VALUE = 3
 
+	PATH_COST = 10
+	PATH_MAX_LEN =	8
+
 var
 	serverTime //server-time in seconds
 	deltaTime //duration of each server tick, in seconds.
 
-	maxServerTime = 1000000//If the servertime reaches this threshhold, then the serverTime is at risk of timer errors.
+	maxServerTime = 100000//If the servertime reaches this threshhold, then the serverTime is at risk of timer errors.
 	//A server reboot at this point is necessary to prevent these errors
 
 	pauseGame //This is a bool that will pause the game
@@ -107,6 +110,26 @@ proc
 			for(var/datum/D in activeDatums)
 				if(D.tickTimer <= serverTime)
 					D.Tick()
+
+			//if the serverTime >= maxServerTime then we are going to have problems.
+			//reboot son!
+			if(serverTime >= maxServerTime)
+				maintenanceReboot()
+
+	maintenanceReboot()
+		//tell the world that a reboot is imminent
+
+		//put all players in "transit" space
+
+		//save all player characters
+
+		//save all maps if applicable
+
+		//clean up and dispose of all resources
+
+		//reboot
+		sleep(5)
+		world.Reboot(0)
 
 datum
 	var
