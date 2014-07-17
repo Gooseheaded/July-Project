@@ -25,6 +25,10 @@ client
 Hex
 
 	Turf
+		Dirt
+			icon = 'dirtHex.png'
+
+
 		Click(location,control,params)
 			.=..()
 
@@ -53,6 +57,10 @@ Hex
 					map.hexes |= G
 
 	Actor
+		Tree
+			icon = 'tree.png'
+			hex_height = 1
+
 		TestMob
 			layer_mod = 0
 

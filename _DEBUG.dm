@@ -2,24 +2,6 @@
 
 var/HexMap/map
 
-Hex/Turf
-	Click(location,control,params)
-		..()
-
-		//map.hexes |= new /Hex/Actor/Tree(map, hex_x, hex_y)
-
-		var/param[] = params2list(params)
-
-		world<<params
-
-		if(param["right"])
-			world<<"TOGGLE PERIMETER MAN"
-
-			if(locate(/Hex/RedGlow) in hex_contents)
-				del locate(/Hex/RedGlow)
-			else
-				map.hexes |= new /Hex/RedGlow(map, hex_x, hex_y)
-
 Hex/Actor/Tree
 	Click()
 		..()
@@ -58,10 +40,7 @@ client
 
 			for(var/i = 1, i <= map.size_x, i ++)
 				for(var/j = 1, j <= map.size_y, j ++)
-					if(prob(50))
-						map.createHexTurf(i, j, /Hex/Turf/Dirt)
-					else
-						map.createHexTurf(i, j, /Hex/Turf/Grass)
+					map.createHexTurf(i, j, /Hex/Turf/Dirt)
 
 			var/trees = sqrt(map.size_x * map.size_y)
 			for(var/i = 1, i <= trees, i ++)
