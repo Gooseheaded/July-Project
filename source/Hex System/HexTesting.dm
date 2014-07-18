@@ -37,14 +37,18 @@ Hex
 			if(usr.client.hexMob && param["left"])
 				world<<"MOVING HEX MOB TO [src]"
 
-				usr.client.hexMob.animatedMoveTo(hex_x, hex_y, hex_z, 0.25, "animated", "")
+
+				var/path[] = findHexPath(usr.client.hexMob, src)
+				for(var/Hex/H in path)
+					usr.client.hexMob.animatedMoveTo(H.hex_x, H.hex_y, H.hex_z, 0.25, "animated", "")
+					sleep(3)
 
 				//usr.client.hexMob.moveTo(src.hex_x, src.hex_y, src.hex_z)
 
 
 			if(param["right"])
-				if(locate(/Hex/Actor/grass) in hex_contents)
-					var/Hex/Actor/grass/G = locate(/Hex/Actor/grass) in hex_contents
+				if(locate(/Hex/Doodad/grass) in hex_contents)
+					var/Hex/Doodad/grass/G = locate(/Hex/Doodad/grass) in hex_contents
 					hex_contents -= G
 
 					G.AutoJoin()
@@ -53,27 +57,19 @@ Hex
 					world<<"CREATING GRASS AT [src]"
 
 					var/HexMap/map = hexMaps[hexMaps[1]]
-					var/Hex/Actor/grass/G = new(map, hex_x, hex_y)
+					var/Hex/Doodad/grass/G = new(map, hex_x, hex_y)
 					map.hexes |= G
 
-	Actor
+	Doodad
 		Tree
 			icon = 'tree.png'
-			hex_height = 1
-
-		TestMob
-			layer_mod = 0
-
-			icon = 'TestMob.dmi'
-
-			offset_x = -32
-			offset_y = -4
 
 			hex_density = 1
 			hex_height = 1
 
-			var
-				client/c
+
+			offset_x = -32
+			offset_y = -28
 
 		grass
 			hex_height = 0.2
@@ -82,9 +78,7 @@ Hex
 
 
 			offset_x = -32
-			offset_y = -21
-
-			mouse_opacity = 0
+			offset_y = -22
 
 			New()
 				.=..()
@@ -106,3 +100,25 @@ Hex
 							flags |= src.getHexDir(H)
 
 					icon_state = "[flags]"
+
+	Actor
+		TestMob
+			layer_mod = 0
+
+			icon = 'TestMob.dmi'
+
+			offset_x = -32
+			offset_y = -4
+
+			hex_density = 1
+			hex_height = 1
+
+			var
+				client/c
+
+
+
+			offset_x = -32
+			offset_y = -9
+
+			mouse_opacity = 0

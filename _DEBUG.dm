@@ -2,7 +2,7 @@
 
 var/HexMap/map
 
-Hex/Actor/Tree
+Hex/Doodad/Tree
 	Click()
 		..()
 		del src
@@ -44,7 +44,7 @@ client
 
 			var/trees = sqrt(map.size_x * map.size_y)
 			for(var/i = 1, i <= trees, i ++)
-				map.hexes |= new /Hex/Actor/Tree(map, rand(1, map.size_x), rand(1,map.size_y))
+				map.hexes |= new /Hex/Doodad/Tree(map, rand(1, map.size_x), rand(1,map.size_y))
 
 			mob.loc = locate(1,1,1)
 
