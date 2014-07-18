@@ -4,6 +4,10 @@ mob
 		ADDGUI()
 			if(!client.gui) client.gui = new/GUI()
 
-			var/GUIObject/o = new/GUIObject(client.gui, null, null, 'ccbg.png', null, GUI_LAYER)
+			new/CharacterCreation/Main(client)
+			/*
+			var/GUIObject/o = new/GUIObject(ico='ccbg.png', lay=GUI_LAYER)
 			o.setValues(2,2, 0,0, GUI_LAYER)
+			client.gui.contents.Add(o)
 			client.gui.update()
+			*/
