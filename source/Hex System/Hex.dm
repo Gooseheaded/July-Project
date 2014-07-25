@@ -61,6 +61,10 @@ Hex
 
 		path_cost = 2
 
+		//these are hard pixel offsets
+		offset_x
+		offset_y
+
 
 	New(hexMap, nx, ny, nz = 0)
 		map = hexMap
@@ -155,6 +159,9 @@ Hex
 
 			pixel_x = px%icon_x
 			pixel_y = py%icon_y
+
+			pixel_x += offset_x
+			pixel_y += offset_y
 
 			loc = locate(lx, ly, lz)
 
@@ -287,11 +294,13 @@ Hex
 			.=..()
 			hex_contents -= H
 
-	Actor
-		var
-			offset_x
-			offset_y
+	Doodad
+		moveTo(new_x, new_y, new_z, forced = 0)
+			.=..(new_x, new_y, new_z)
+			pixel_x += hex_center.x
+			pixel_y += hex_center.y
 
+	Actor
 		moveTo(new_x, new_y, new_z, forced = 0) //This returns a 0 if it failed.
 
 			//do the collission detection first?
@@ -301,50 +310,9 @@ Hex
 			if(!newLoc.canEnter(src) && !forced)
 				return 0
 			else
-				hex_x = new_x
-				hex_y = new_y
-				hex_z = newLoc.hex_height
-
-				var/vector/coordinates = computeCoords(hex_x, hex_y, hex_z)
-				layer = computeScreenLayer(coordinates)
-
-				var/px = coordinates.x
-				var/py = coordinates.y + coordinates.z
-
-				//add the map offset stuff to the px and py here
-				var
-					lx = round(px/icon_x) + 1
-					ly = round(py/icon_y) + 1
-					lz = map.map_z
-
-				pixel_x = px%icon_x
-				pixel_y = py%icon_y
-
+				.=..(new_x, new_y, new_z)
 				pixel_x += hex_center.x
 				pixel_y += hex_center.y
-
-				pixel_x += offset_x
-				pixel_y += offset_y
-
-				loc = locate(lx, ly, lz)
-
-				if(pixel_x > icon_x / 2)
-					x ++
-					pixel_x -= icon_x
-
-				if(pixel_y > icon_y / 2)
-					y ++
-					pixel_y -= icon_y
-
-				if(hexLoc != src && hexLoc)
-					hexLoc.exited(src)
-
-				hexLoc = newLoc
-				if(hexLoc != src && hexLoc)
-					hexLoc.entered(src)
-
-				return 1
-
 
 
 
