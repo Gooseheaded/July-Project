@@ -26,7 +26,13 @@ Hex
 
 	Turf
 		Dirt
-			icon = 'dirtHex.png'
+			icon = 'Dirt.dmi'
+			icon_state = "dry 1"
+
+			New()
+				.=..()
+
+				icon_state = "dry [pick(1,2)]"
 
 
 		Click(location,control,params)
