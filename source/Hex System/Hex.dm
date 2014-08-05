@@ -239,6 +239,8 @@ Hex
 			return vec3(cx, cy, cz)
 
 		getHexDist(Hex/H)
+			return hexDist(hex_x, hex_y, H.hex_x, H.hex_y)
+			/*
 			var/y1 = -(hex_x - hex_y)
 			var/y2 = -(H.hex_x - H.hex_y)
 			var/dx = hex_x - H.hex_x
@@ -246,6 +248,7 @@ Hex
 			var/dz = hex_y - H.hex_y
 
 			return max(abs(dx), abs(dy), abs(dz))
+			*/
 
 		getHexDir(Hex/H)
 			//refer to the hex direction reference for the directions...
@@ -276,7 +279,8 @@ Hex
 				if(dotXY > 0) . = 8
 				if(dotXY < 0) . = 1
 
-	Turf
+	Turf //Turfs are hex tiles that go on the map.
+		//These make up the bottom-most layer of any hex map's terrain
 		canEnter(Hex/H)
 			if(!H.hex_density) return 1
 			if(H.hex_density && hex_density) return 0
@@ -294,13 +298,15 @@ Hex
 			.=..()
 			hex_contents -= H
 
-	Doodad
+	Doodad //Doodads are objects that go inside of a hex turf and have to be centered on the hex turf
 		moveTo(new_x, new_y, new_z, forced = 0)
 			.=..(new_x, new_y, new_z)
 			pixel_x += hex_center.x
 			pixel_y += hex_center.y
 
-	Actor
+	Actor //Actors are objects that go inside of a hex turf, and must be centered on the hex turf
+		//Actors also have hex-based collission detection.
+
 		moveTo(new_x, new_y, new_z, forced = 0) //This returns a 0 if it failed.
 
 			//do the collission detection first?
@@ -333,6 +339,7 @@ proc
 		//second row corresponds to the y coord
 		mat[2] = list(hex_axis_x.y, hex_axis_y.y, py)
 
+		//fucking rref, nigga.
 		var/lead = 1
 		var/rowCount = 2
 		var/columnCount = 3
@@ -373,3 +380,12 @@ proc
 						mat[addToRow][j] += mat[addFromRow][j] * coefficient
 
 		return vec2(mat[1][3], mat[2][3])
+
+	hexDist(x1, y1, x2, y2)
+		var/y =  -(x1 - y1)
+		var/yo = -(x2 - y2)
+		var/dx = x1 - x2
+		var/dy = (y - yo)
+		var/dz = y1 - y2
+
+		return max(abs(dx), abs(dy), abs(dz))

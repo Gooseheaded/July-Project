@@ -1,6 +1,8 @@
 //This is for drawing lightning bolt type of effects!
 //It places a line of objects for the lightning bolt.
 
+var
+	boltLayer = 500
 
 proc
 	animatedBolt(tx1, ty1, tx2, ty2, px1=0, py1=0, px2=0, py2=0)
@@ -11,10 +13,10 @@ proc
 			boltObjects += DrawBoltEffect('BoltFade.dmi', tx1, ty1, tx2, ty2, px1, py1, px2, py2)
 
 
-			boltObjects += DrawBoltEffect('Bolt.dmi', tx1, ty1, tx2, ty2, px1, py1, px2, py2, HUD_LAYER-100, 32)
+			boltObjects += DrawBoltEffect('Bolt.dmi', tx1, ty1, tx2, ty2, px1, py1, px2, py2, boltLayer-100, 32)
 
 			sleep(2)
-			boltObjects += DrawBoltEffect('Bolt.dmi', tx1, ty1, tx2, ty2, px1, py1, px2, py2, HUD_LAYER-100, 32)
+			boltObjects += DrawBoltEffect('Bolt.dmi', tx1, ty1, tx2, ty2, px1, py1, px2, py2, boltLayer-100, 32)
 
 			sleep(2)
 
@@ -23,13 +25,13 @@ proc
 	boltWithFade(tx1, ty1, tx2, ty2, px1=0, py1=0, px2=0, py2=0, length = 2, icon/I)
 		spawn()
 			var/boltObjects[0]
-			boltObjects += DrawBoltEffect(I, tx1, ty1, tx2, ty2, px1, py1, px2, py2, HUD_LAYER-100, 32, length)
+			boltObjects += DrawBoltEffect(I, tx1, ty1, tx2, ty2, px1, py1, px2, py2, boltLayer-100, 32, length)
 
 			sleep(2)
 
 			for(var/i in boltObjects) del i
 
-	DrawBoltEffect(icon/I, tx1, ty1, tx2, ty2, px1=0, py1=0, px2=0, py2=0, layer=HUD_LAYER-100, pieceLength = 32,\
+	DrawBoltEffect(icon/I, tx1, ty1, tx2, ty2, px1=0, py1=0, px2=0, py2=0, layer=boltLayer-100, pieceLength = 32,\
 		boltMultiplier = 2, tz = 2)
 	//Parameters are as follows:
 	//Lightning bolt icon
